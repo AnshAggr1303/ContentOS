@@ -3,6 +3,21 @@ import fs from 'fs'
 import path from 'path'
 import { reloadRules } from '../../../../agents/compliance'
 
+export async function GET(): Promise<NextResponse> {
+  const rulesDir = path.join(process.cwd(), 'data', 'rules')
+  try {
+    const sebi = JSON.parse(fs.readFileSync(path.join(rulesDir, 'sebi.json'), 'utf-8')) as unknown[]
+    const brand = JSON.parse(fs.readFileSync(path.join(rulesDir, 'brand.json'), 'utf-8')) as unknown[]
+    const legal = JSON.parse(fs.readFileSync(path.join(rulesDir, 'legal.json'), 'utf-8')) as unknown[]
+    return NextResponse.json({ sebi, brand, legal })
+  } catch (err) {
+    return NextResponse.json(
+      { error: `Failed to read rules: ${(err as Error).message}` },
+      { status: 500 },
+    )
+  }
+}
+
 const ALLOWED_FILES = ['sebi', 'brand', 'legal']
 
 interface RulesRequestBody {
