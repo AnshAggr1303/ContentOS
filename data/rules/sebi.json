@@ -1,0 +1,42 @@
+[
+  {
+    "id": "SEBI-001",
+    "category": "regulatory",
+    "description": "Forward-looking statements must include disclaimer",
+    "pattern_hint": "will grow|expects to|projects|forecasts|targets|expects revenue|anticipates|aims to achieve|planned to|expected to|budgeted for",
+    "severity": "high",
+    "suggested_rewrite_hint": "Add after statement: '(Subject to market conditions and regulatory approvals)'"
+  },
+  {
+    "id": "SEBI-002",
+    "category": "regulatory",
+    "description": "Price-sensitive information must not be disclosed before official exchange filing",
+    "pattern_hint": "likely to announce|expected to report|sources say|insider sources|unconfirmed reports|reliably learn|we understand|is likely to",
+    "severity": "medium",
+    "suggested_rewrite_hint": "Attribute exclusively to official BSE/NSE filings or company disclosures. Remove unattributed claims. Use 'According to regulatory filings' or 'As per stock exchange disclosure'."
+  },
+  {
+    "id": "SEBI-003",
+    "category": "regulatory",
+    "description": "Analyst recommendations must disclose conflicts of interest",
+    "pattern_hint": "buy|strong buy|sell|strong sell|target price|rating|outperform|underperform|overweight|underweight|accumulate",
+    "severity": "medium",
+    "suggested_rewrite_hint": "Add analyst name and firm affiliation: '[Analyst Name, XYZ Securities]. [Publication] holds no position in this stock.' Or cite research report formally."
+  },
+  {
+    "id": "SEBI-004",
+    "category": "regulatory",
+    "description": "Stock price manipulation language prohibited - no language inducing trading behavior",
+    "pattern_hint": "guaranteed returns|assured gains|can't lose|sure bet|double your money|certain profits|risk-free|foolproof|gold mine|unmissable opportunity",
+    "severity": "high",
+    "suggested_rewrite_hint": "Replace with factual price history. Example: 'The stock has gained 45% YoY' instead of 'investors are guaranteed to profit'. Use neutral tone and cite historical data."
+  },
+  {
+    "id": "SEBI-005",
+    "category": "regulatory",
+    "description": "Insider trading references must include appropriate disclaimers and attribution",
+    "pattern_hint": "insider buying|insider selling|promoter bought|promoter sold|bulk deal|shareholding pattern|promoter stake|stake increase",
+    "severity": "high",
+    "suggested_rewrite_hint": "Cite official BSE/NSE bulk deal disclosures or shareholding pattern data. Example: 'According to bulk deal data on BSE, [Name] bought X shares at ₹Y.' Include filing reference."
+  }
+]

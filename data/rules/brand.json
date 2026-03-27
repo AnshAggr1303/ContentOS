@@ -1,0 +1,42 @@
+[
+  {
+    "id": "BRAND-001",
+    "category": "tone",
+    "description": "Active voice required; passive voice weakens ET's authoritative tone",
+    "pattern_hint": "was reported|were said|is expected to be|has been announced|was seen",
+    "severity": "medium",
+    "suggested_rewrite_hint": "Rewrite to subject-verb-object: 'Company X reported...' not 'It was reported that Company X...'"
+  },
+  {
+    "id": "BRAND-002",
+    "category": "headline",
+    "description": "No click-bait or sensationalist headlines",
+    "pattern_hint": "you won't believe|shocking|jaw-dropping|blew up|went viral|mind-blowing",
+    "severity": "high",
+    "suggested_rewrite_hint": "Rewrite to factual declarative: 'Company X posts 40% profit growth in Q3'"
+  },
+  {
+    "id": "BRAND-003",
+    "category": "sourcing",
+    "description": "Competitor publications must not be named or quoted",
+    "pattern_hint": "according to Reuters|Bloomberg reported|Mint reported|Business Standard said|Financial Express",
+    "severity": "medium",
+    "suggested_rewrite_hint": "Attribute to primary source (company, regulator, exchange filing) instead of competitor publication"
+  },
+  {
+    "id": "BRAND-004",
+    "category": "formatting",
+    "description": "Numbers must be formatted in Indian numbering system (lakh/crore), not Western (million/billion) for Indian figures",
+    "pattern_hint": "\\d+ million|\\d+ billion|\\d+M |\\d+B ",
+    "severity": "low",
+    "suggested_rewrite_hint": "Convert to Indian numbering: 1 crore = 10 million, 1 lakh crore = 1 trillion"
+  },
+  {
+    "id": "BRAND-005",
+    "category": "credibility",
+    "description": "ET articles must be data-backed; opinion language without attribution is prohibited",
+    "pattern_hint": "clearly|obviously|everyone knows|it is widely believed|common knowledge",
+    "severity": "medium",
+    "suggested_rewrite_hint": "Replace with cited data or expert attribution instead of unsupported assertions"
+  }
+]

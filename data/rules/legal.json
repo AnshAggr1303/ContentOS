@@ -1,0 +1,42 @@
+[
+  {
+    "id": "LEGAL-001",
+    "category": "defamation",
+    "description": "Unverified allegations must be attributed to a named source, not stated as fact",
+    "pattern_hint": "allegedly|reportedly|is accused of|is believed to have|sources claim",
+    "severity": "high",
+    "suggested_rewrite_hint": "Attribute to a named source or official document: 'According to the CBI chargesheet...' or 'Company X denied the allegation.'"
+  },
+  {
+    "id": "LEGAL-002",
+    "category": "legal",
+    "description": "Statements about ongoing court cases must include sub judice caveat and avoid prejudging outcome",
+    "pattern_hint": "guilty|convicted|proved|found to have|judgment is clear|court will rule",
+    "severity": "high",
+    "suggested_rewrite_hint": "Use 'is facing charges of' or 'the court is yet to rule' — never prejudge verdicts. Add: 'The matter is sub judice.'"
+  },
+  {
+    "id": "LEGAL-003",
+    "category": "defamation",
+    "description": "Personal financial information of private individuals (non-public figures) must not be published",
+    "pattern_hint": "personal bank account|personal assets worth|private net worth|individual tax|personal property valued",
+    "severity": "high",
+    "suggested_rewrite_hint": "Remove private individual data. Public figures' declared assets from public filings are permitted; private individuals' personal finances must be omitted."
+  },
+  {
+    "id": "LEGAL-004",
+    "category": "attribution",
+    "description": "Quotes must be attributed to a named, verifiable source",
+    "pattern_hint": "a source said|anonymous sources|industry insiders|people familiar|those in the know",
+    "severity": "medium",
+    "suggested_rewrite_hint": "Use named sources or rephrase as industry context without quotes. Example: 'According to analysts at Goldman Sachs...' instead of 'sources say...'"
+  },
+  {
+    "id": "LEGAL-005",
+    "category": "medical_claims",
+    "description": "Health claims about products or individuals require medical attribution",
+    "pattern_hint": "cures|proven to treat|guaranteed to heal|medically proven|clinically shown",
+    "severity": "medium",
+    "suggested_rewrite_hint": "Attribute to a named study with journal citation: 'A 2024 AIIMS study published in The Lancet found...' or remove unsubstantiated health claims."
+  }
+]
