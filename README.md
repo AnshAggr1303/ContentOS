@@ -81,7 +81,7 @@ Raw Input → [A1: Drafter] → Gate 1 (Editor) → [A2: Compliance]
 ### Install
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/ContentOS.git
+git clone https://github.com/AnshAggr1303/ContentOS.git
 cd ContentOS
 npm install
 ```
