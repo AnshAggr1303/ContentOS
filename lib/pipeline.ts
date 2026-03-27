@@ -76,7 +76,7 @@ export async function startPipeline(job: PipelineJob): Promise<void> {
     const drafterResult = await runDrafter({
       rawInput: job.input,
       contentType: job.contentType,
-      wordCount: 600,
+      wordCount: job.wordCount,
       jobId: job.id,
     })
 

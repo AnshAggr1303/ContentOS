@@ -61,6 +61,7 @@ export interface PipelineJob {
   status: PipelineStatus
   input: string
   contentType: ContentType
+  wordCount: number
   selectedLanguages: Language[]
   selectedChannels: Channel[]
   draft?: string

@@ -7,6 +7,7 @@ import type { ContentType, Language, Channel } from '../../../lib/types'
 interface PipelineRequestBody {
   input: string
   contentType: ContentType
+  wordCount?: number
   selectedLanguages: Language[]
   selectedChannels: Channel[]
 }
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  const { input, contentType, selectedLanguages, selectedChannels } = body
+  const { input, contentType, wordCount, selectedLanguages, selectedChannels } = body
 
   if (!input || !contentType || !selectedLanguages?.length || !selectedChannels?.length) {
     return NextResponse.json({ error: 'Missing required fields: input, contentType, selectedLanguages, selectedChannels' }, { status: 400 })
@@ -42,6 +43,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     status: 'running_a1',
     input,
     contentType,
+    wordCount: wordCount ?? 600,
     selectedLanguages,
     selectedChannels,
     createdAt: now,

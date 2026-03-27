@@ -285,6 +285,25 @@ export default function DashboardPage() {
       es.close();
     });
 
+    es.addEventListener("pipeline_rejected", () => {
+      setPhase("idle");
+      setJobId(null);
+      setAgents(INITIAL_AGENTS);
+      setComplianceFlags([]);
+      setComplianceOverallRisk("low");
+      setComplianceStatus("PASS");
+      setGate1Data(null);
+      setGate2Data(null);
+      es.close();
+    });
+
+    es.addEventListener("pipeline_error", (e: MessageEvent) => {
+      const data = JSON.parse(e.data as string) as { error: string };
+      setPhase("failed");
+      setErrorMessage(data.error ?? "Pipeline failed");
+      es.close();
+    });
+
     es.onerror = () => {
       // EventSource will auto-reconnect; only mark failed after extended silence
       console.warn("SSE connection interrupted — awaiting reconnect");
