@@ -135,6 +135,7 @@ export async function startPipeline(job: PipelineJob): Promise<void> {
       agent: 'compliance',
       jobId: job.id,
       output_preview: `${complianceResult.status} | ${complianceResult.flags.length} flags`,
+      result: complianceResult,
     })
 
     // ── A3: Localizer (parallel Promise.all inside runLocalizer) ─────────────

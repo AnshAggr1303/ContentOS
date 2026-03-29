@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,wght@0,400;0,600;0,700;1,400&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-highest": "#e3e2df",
+                        "primary-container": "#e8820c",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#004b73",
+                        "on-tertiary-container": "#003756",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#554335",
+                        "tertiary-container": "#00a4f6",
+                        "on-primary-container": "#512900",
+                        "surface": "#faf9f6",
+                        "outline": "#887363",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#ffb77b",
+                        "secondary-fixed-dim": "#f8ba87",
+                        "on-primary-fixed": "#2e1500",
+                        "primary-fixed": "#ffdcc2",
+                        "on-background": "#1b1c1a",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#2f312f",
+                        "inverse-on-surface": "#f2f1ee",
+                        "tertiary-fixed": "#cce5ff",
+                        "on-secondary-fixed": "#2e1500",
+                        "outline-variant": "#dcc2af",
+                        "surface-container": "#efeeeb",
+                        "surface-container-low": "#f4f3f0",
+                        "surface-variant": "#e3e2df",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#ffdcc2",
+                        "surface-dim": "#dbdad7",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#001d31",
+                        "on-surface": "#1b1c1a",
+                        "secondary": "#82542a",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#faf9f6",
+                        "primary-fixed-dim": "#ffb77b",
+                        "primary": "#904d00",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#6d3900",
+                        "on-secondary-fixed-variant": "#673d15",
+                        "background": "#faf9f6",
+                        "surface-container-high": "#e9e8e5",
+                        "on-secondary-container": "#794c23",
+                        "surface-tint": "#904d00",
+                        "secondary-container": "#febf8c",
+                        "tertiary": "#006397"
+                    },
+                    fontFamily: {
+                        "headline": ["Newsreader"],
+                        "body": ["Newsreader"],
+                        "label": ["Inter"],
+                        "technical": ["DM Mono"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .article-fade {
+            background: linear-gradient(to bottom, transparent 0%, #ffffff 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- SideNavBar (Shared Component) -->
+<aside class="w-64 h-screen fixed left-0 top-0 bg-[#0A0A0C] flex flex-col py-6 z-50">
+<div class="px-6 mb-10">
+<h1 class="text-white font-semibold tracking-widest font-inter text-lg uppercase">ContentOS</h1>
+<p class="text-slate-500 text-[10px] tracking-widest uppercase mt-1">AI Pipeline</p>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Dashboard Tab -->
+<a class="text-slate-400 flex items-center px-4 py-3 hover:bg-[#1E293B] hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="text-[10px] uppercase tracking-widest font-label">Dashboard</span>
+</a>
+<!-- Audit Log (Active Map for Review Flow) -->
+<a class="bg-[#1E293B] text-white border-l-4 border-[#E8820C] flex items-center px-4 py-3 scale-98 transition-all" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="history_edu">history_edu</span>
+<span class="text-[10px] uppercase tracking-widest font-label">Audit Log</span>
+</a>
+<!-- Rules Editor -->
+<a class="text-slate-400 flex items-center px-4 py-3 hover:bg-[#1E293B] hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="rule">rule</span>
+<span class="text-[10px] uppercase tracking-widest font-label">Rules Editor</span>
+</a>
+</nav>
+<div class="mt-auto px-6 border-t border-slate-800 pt-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-white text-xs font-bold">CT</div>
+<div>
+<p class="text-white text-[10px] font-label tracking-widest uppercase">Terminal</p>
+<p class="text-slate-500 text-[9px] font-technical uppercase">ET AI Hackathon 2026</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 min-h-screen pb-32">
+<!-- TopAppBar (Shared Component) -->
+<header class="docked full-width sticky top-0 h-14 bg-white shadow-sm flex justify-between items-center px-10 z-40">
+<div class="flex items-center gap-6">
+<span class="text-[#1A1A1A] font-newsreader font-bold text-xl">Economic Times AI</span>
+<div class="flex gap-4">
+<span class="text-slate-500 text-sm font-technical">Compliance: 94%</span>
+<span class="text-slate-500 text-sm font-technical">Savings: ₹58.4 Cr</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></div>
+<span class="text-slate-500 text-xs font-label uppercase tracking-tighter">Pipeline running · 0:23</span>
+</div>
+<div class="flex gap-3 text-slate-400">
+<span class="material-symbols-outlined text-xl" data-icon="schedule">schedule</span>
+<span class="material-symbols-outlined text-xl" data-icon="payments">payments</span>
+<span class="material-symbols-outlined text-xl" data-icon="verified">verified</span>
+</div>
+</div>
+</header>
+<!-- Centered Content Wrapper (Max 1000px) -->
+<div class="max-w-[1000px] mx-auto px-10 pt-12">
+<!-- Gate Header -->
+<div class="flex flex-col gap-4 mb-12">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="text-[10px] font-label font-bold tracking-widest text-primary-container uppercase">GATE 1 OF 2 — DRAFT REVIEW</span>
+</div>
+<div class="flex justify-between items-end">
+<h2 class="text-[3.5rem] font-headline text-on-surface leading-tight">Editorial Draft Review</h2>
+<div class="flex gap-2 pb-4">
+<div class="px-4 py-1.5 bg-[#1A1A1A] text-white rounded-full text-xs font-label">Gate 1</div>
+<div class="px-4 py-1.5 border border-outline-variant text-slate-400 rounded-full text-xs font-label">Gate 2</div>
+</div>
+</div>
+</div>
+<!-- Headlines Selection -->
+<section class="mb-16">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-[10px] font-label font-bold tracking-[0.2em] text-on-surface-variant uppercase">SELECT HEADLINE</h3>
+</div>
+<div class="grid grid-cols-3 gap-6">
+<!-- Active Card -->
+<div class="bg-white p-6 rounded-xl border-[1.5px] border-primary-container relative cursor-pointer ring-4 ring-primary-container/5 transition-all">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-technical text-primary-container tracking-widest">PUNCHY</span>
+<span class="material-symbols-outlined text-primary-container" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<p class="text-xl font-headline leading-snug">Reliance Posts Record ₹19,641 Cr Profit</p>
+</div>
+<!-- Inactive Card 2 -->
+<div class="bg-white p-6 rounded-xl border border-outline-variant hover:border-primary-container transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-technical text-slate-400 group-hover:text-primary-container tracking-widest">DESCRIPTIVE</span>
+</div>
+<p class="text-xl font-headline leading-snug text-slate-600 group-hover:text-on-surface">Reliance Q3 Earnings Surpass Market Expectations on Strong Retail Growth</p>
+</div>
+<!-- Inactive Card 3 -->
+<div class="bg-white p-6 rounded-xl border border-outline-variant hover:border-primary-container transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-technical text-slate-400 group-hover:text-primary-container tracking-widest">ANALYTICAL</span>
+</div>
+<p class="text-xl font-headline leading-snug text-slate-600 group-hover:text-on-surface">Behind the Numbers: How Reliance Integrated O2C Strength with Retail Expansion</p>
+</div>
+</div>
+</section>
+<!-- Article Draft -->
+<section class="mb-24">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-[10px] font-label font-bold tracking-[0.2em] text-on-surface-variant uppercase">ARTICLE DRAFT</h3>
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-xs font-label hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+<span>Edit Draft</span>
+</button>
+</div>
+<article class="bg-white p-12 rounded-xl shadow-sm relative overflow-hidden">
+<div class="flex items-center gap-3 mb-8">
+<span class="text-[10px] font-technical text-slate-400 tracking-widest">STORY SLUG</span>
+<span class="text-[10px] font-technical text-primary-container font-bold tracking-widest">FIN-INDIA-RIL-Q3</span>
+</div>
+<h1 class="text-4xl font-headline leading-tight italic mb-10">Reliance Industries maintains aggressive growth trajectory as retail and digital segments offset global energy volatility.</h1>
+<div class="space-y-8 max-w-[720px]">
+<p class="text-[17px] font-headline leading-[1.8] text-on-surface">
+                            MUMBAI — Reliance Industries Ltd (RIL) on Friday reported a consolidated net profit of ₹19,641 crore for the October-December quarter, a performance that analysts are calling "exceptionally resilient" given the macro-economic headwinds facing the global energy sector. The results underscore the conglomerate's successful pivot toward a consumer-centric ecosystem.
+                        </p>
+<p class="text-[17px] font-headline leading-[1.8] text-on-surface">
+                            Gross revenue for the quarter stood at ₹2.48 lakh crore, up 3.2% year-on-year. The star performers were the company's retail and digital services divisions, which now contribute nearly half of the group's overall EBITDA. Reliance Retail, in particular, saw a massive footfall of 282 million customers during the festive season, cementing its position as India's undisputed retail leader.
+                        </p>
+<!-- Fade out effect -->
+<div class="relative pt-12 pb-6">
+<div class="absolute inset-x-0 bottom-0 h-48 article-fade pointer-events-none"></div>
+<p class="text-[17px] font-headline leading-[1.8] text-on-surface opacity-40">
+                                Meanwhile, the Oil-to-Chemicals (O2C) segment faced challenges from lower refining margins globally. However, the company's superior configuration and ability to optimize feedstock helped maintain operational stability. Analysts expect the next phase of growth to be driven by the rollout of the New Energy business, which is slated for commercialization in late 2025.
+                            </p>
+</div>
+</div>
+<div class="mt-8 text-center">
+<button class="text-primary-container font-label font-semibold text-sm hover:underline flex items-center justify-center w-full gap-2">
+<span>Show full article</span>
+<span class="material-symbols-outlined" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+</article>
+</section>
+</div>
+<!-- Sticky Action Bar (Shared Component - BottomNavBar Mapping) -->
+<footer class="fixed bottom-0 right-0 left-64 h-20 bg-white flex justify-end items-center px-10 gap-4 z-50">
+<button class="px-8 py-3 text-error border border-error rounded-lg text-sm font-label font-semibold hover:bg-error/5 transition-all scale-100 active:scale-95">
+                REJECT DRAFT
+            </button>
+<button class="bg-[#1A1A1A] text-white border-l-4 border-primary-container px-8 py-3 rounded-lg text-sm font-label font-semibold hover:bg-slate-800 transition-all scale-100 active:scale-95 flex items-center gap-2">
+<span>APPROVE &amp; FORWARD</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</footer>
+</main>
+</body></html>

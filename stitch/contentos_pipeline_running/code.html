@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ContentOS - Pipeline Running</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Inter:wght@100..900&amp;family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#e3e2df",
+              "primary-container": "#e8820c",
+              "tertiary-fixed-dim": "#93ccff",
+              "on-secondary": "#ffffff",
+              "on-tertiary-fixed-variant": "#004b73",
+              "on-tertiary-container": "#003756",
+              "surface-container-lowest": "#ffffff",
+              "on-surface-variant": "#554335",
+              "tertiary-container": "#00a4f6",
+              "on-primary-container": "#512900",
+              "surface": "#faf9f6",
+              "outline": "#887363",
+              "error": "#ba1a1a",
+              "inverse-primary": "#ffb77b",
+              "secondary-fixed-dim": "#f8ba87",
+              "on-primary-fixed": "#2e1500",
+              "primary-fixed": "#ffdcc2",
+              "on-background": "#1b1c1a",
+              "on-error-container": "#93000a",
+              "inverse-surface": "#2f312f",
+              "inverse-on-surface": "#f2f1ee",
+              "tertiary-fixed": "#cce5ff",
+              "on-secondary-fixed": "#2e1500",
+              "outline-variant": "#dcc2af",
+              "surface-container": "#efeeeb",
+              "surface-container-low": "#f4f3f0",
+              "surface-variant": "#e3e2df",
+              "on-primary": "#ffffff",
+              "secondary-fixed": "#ffdcc2",
+              "surface-dim": "#dbdad7",
+              "error-container": "#ffdad6",
+              "on-tertiary-fixed": "#001d31",
+              "on-surface": "#1b1c1a",
+              "secondary": "#82542a",
+              "on-tertiary": "#ffffff",
+              "surface-bright": "#faf9f6",
+              "primary-fixed-dim": "#ffb77b",
+              "primary": "#904d00",
+              "on-error": "#ffffff",
+              "on-primary-fixed-variant": "#6d3900",
+              "on-secondary-fixed-variant": "#673d15",
+              "background": "#faf9f6",
+              "surface-container-high": "#e9e8e5",
+              "on-secondary-container": "#794c23",
+              "surface-tint": "#904d00",
+              "secondary-container": "#febf8c",
+              "tertiary": "#006397"
+            },
+            fontFamily: {
+              "headline": ["Newsreader", "serif"],
+              "body": ["Newsreader", "serif"],
+              "label": ["Inter", "sans-serif"],
+              "mono": ["DM Mono", "monospace"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .pulse-green {
+            animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar (from JSON) -->
+<aside class="w-64 h-screen fixed left-0 top-0 bg-[#0A0A0C] flex flex-col py-6 z-50">
+<div class="px-6 mb-10">
+<h1 class="text-white font-semibold tracking-widest font-label text-lg">ContentOS</h1>
+<p class="text-slate-500 text-[10px] uppercase tracking-widest mt-1">AI Pipeline</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="bg-[#1E293B] text-white border-l-4 border-[#E8820C] flex items-center px-4 py-3 scale-98 transition-all" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="font-label text-xs uppercase tracking-widest">Dashboard</span>
+</a>
+<a class="text-slate-400 flex items-center px-4 py-3 hover:bg-[#1E293B] hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="history_edu">history_edu</span>
+<span class="font-label text-xs uppercase tracking-widest">Audit Log</span>
+</a>
+<a class="text-slate-400 flex items-center px-4 py-3 hover:bg-[#1E293B] hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="rule">rule</span>
+<span class="font-label text-xs uppercase tracking-widest">Rules Editor</span>
+</a>
+</nav>
+<div class="mt-auto px-4 border-t border-slate-800 pt-6">
+<div class="flex items-center gap-3 text-slate-400 mb-6">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span class="text-[10px] uppercase tracking-widest">ET AI Hackathon 2026</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-white">CT</div>
+<div class="flex flex-col">
+<span class="text-xs text-white font-medium">Curator Team</span>
+<span class="text-[10px] text-slate-500 uppercase tracking-widest">Admin Access</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen flex flex-col">
+<!-- TopAppBar (from JSON) -->
+<header class="sticky top-0 h-14 bg-white shadow-sm flex justify-between items-center px-10 z-40">
+<div class="flex items-center gap-8">
+<h2 class="text-[#1A1A1A] font-headline font-bold text-xl leading-none">Economic Times AI</h2>
+<div class="hidden lg:flex items-center gap-6">
+<span class="font-mono text-sm text-slate-500">Draft to publish: ~35 min</span>
+<span class="font-mono text-sm text-slate-500">Saved: ₹3,200</span>
+<span class="font-mono text-sm text-slate-500">Compliance: <span class="text-[#E8820C] font-bold">94%</span></span>
+<span class="font-mono text-sm text-slate-500">Savings: ₹58.4 Cr</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container">
+<span class="w-2 h-2 rounded-full bg-[#059669] pulse-green"></span>
+<span class="font-mono text-[13px] text-slate-600">Pipeline running · 0:23</span>
+</div>
+<div class="flex gap-2 text-slate-400">
+<span class="material-symbols-outlined cursor-pointer hover:text-[#E8820C]" data-icon="schedule">schedule</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-[#E8820C]" data-icon="payments">payments</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-[#E8820C]" data-icon="verified">verified</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-[#E8820C]" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+</header>
+<!-- Page Body: Asymmetric Layout -->
+<div class="flex-1 grid grid-cols-12 gap-0">
+<!-- Left Column: Input Panel -->
+<section class="col-span-5 p-10 bg-surface flex flex-col gap-8">
+<div>
+<span class="font-label text-[10px] uppercase tracking-[0.2em] text-outline mb-2 block">Content Brief</span>
+<h3 class="font-headline text-3xl font-bold text-on-surface mb-6">Initiate New Sequence</h3>
+<div class="space-y-6">
+<div class="flex flex-col gap-2">
+<label class="font-label text-[10px] uppercase tracking-widest text-slate-500">Editorial Prompt</label>
+<div class="relative">
+<textarea class="w-full h-64 p-6 bg-surface-container-low border-none rounded-xl font-body text-lg text-slate-500 resize-none focus:ring-0 cursor-not-allowed italic" disabled="" placeholder="The system is currently processing the prompt below...">Analyze the Q3 earnings report for major tech sectors with a focus on semi-conductor supply chains and geopolitical impact in Southeast Asia. Compare against last year's performance and highlight potential risks for 2026 investors.</textarea>
+<div class="absolute bottom-4 right-4 flex items-center gap-2 text-slate-400">
+<span class="material-symbols-outlined text-sm" data-icon="lock">lock</span>
+<span class="font-mono text-[10px]">LOCKED DURING RUN</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="auto_awesome">auto_awesome</span>
+<div>
+<p class="font-label text-xs font-semibold">Model Precision</p>
+<p class="font-mono text-[10px] text-slate-500 uppercase">GPT-4o-Turbo • 128k Context</p>
+</div>
+</div>
+<div class="flex gap-1">
+<div class="w-1.5 h-6 bg-primary rounded-full"></div>
+<div class="w-1.5 h-6 bg-primary rounded-full"></div>
+<div class="w-1.5 h-6 bg-primary rounded-full"></div>
+<div class="w-1.5 h-6 bg-primary/20 rounded-full"></div>
+</div>
+</div>
+<button class="w-full bg-[#6B7280] text-white py-4 rounded-lg font-label font-semibold flex items-center justify-center gap-3 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined animate-spin" data-icon="sync">sync</span>
+                            Running...
+                        </button>
+</div>
+</div>
+</section>
+<!-- Right Column: Status Canvas -->
+<section class="col-span-7 bg-surface-container p-10">
+<div class="max-w-2xl mx-auto">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="font-headline text-[28px] font-bold text-on-surface">Pipeline Status</h3>
+<p class="font-body text-slate-500 mt-1">Orchestrating editorial agents in real-time.</p>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-[#ECFDF5] text-[#059669]">
+<span class="w-2 h-2 rounded-full bg-[#059669] pulse-green"></span>
+<span class="font-label text-[11px] font-bold uppercase tracking-wider">Processing</span>
+</div>
+</div>
+<!-- Agent Rows -->
+<div class="flex flex-col gap-3">
+<!-- Drafter: COMPLETE -->
+<div class="bg-surface-container-lowest border-l-4 border-[#059669] rounded-xl p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-[#F0FDF4] rounded-lg flex items-center justify-center text-[#059669]">
+<span class="material-symbols-outlined" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<p class="font-headline text-lg font-bold">Drafter</p>
+<p class="font-mono text-[11px] text-slate-400 uppercase">Agent-D7 • Newsreader V3</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-mono text-xs text-slate-400">3.2s</span>
+<span class="px-2.5 py-1 rounded-md bg-[#F0FDF4] text-[#059669] font-label text-[10px] font-bold uppercase tracking-wider">Complete</span>
+</div>
+</div>
+<!-- Compliance: RUNNING -->
+<div class="bg-surface-container-lowest border-l-4 border-[#E8820C] rounded-xl p-5 flex items-center justify-between shadow-sm scale-[1.02] transition-transform">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-[#FFF7ED] rounded-lg flex items-center justify-center text-[#E8820C]">
+<span class="material-symbols-outlined animate-spin" data-icon="sync">sync</span>
+</div>
+<div>
+<p class="font-headline text-lg font-bold">Compliance</p>
+<p class="font-mono text-[11px] text-[#E8820C] font-medium uppercase">Checking Policy Violations...</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-mono text-xs text-[#E8820C] animate-pulse">0.8s</span>
+<span class="px-2.5 py-1 rounded-md bg-[#FFF7ED] text-[#E8820C] font-label text-[10px] font-bold uppercase tracking-wider">Running</span>
+</div>
+</div>
+<!-- Localizer: WAITING -->
+<div class="bg-surface-container-lowest border-l-4 border-slate-200 rounded-xl p-4 flex items-center justify-between opacity-70">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-[#F9FAFB] rounded-lg flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined" data-icon="language">language</span>
+</div>
+<div>
+<p class="font-headline text-lg font-bold">Localizer</p>
+<p class="font-mono text-[11px] text-slate-400 uppercase">Agent-L2 • Multi-Lingual Core</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-mono text-xs text-slate-300">--</span>
+<span class="px-2.5 py-1 rounded-md bg-[#F9FAFB] text-slate-400 font-label text-[10px] font-bold uppercase tracking-wider">Waiting</span>
+</div>
+</div>
+<!-- Distributor: WAITING -->
+<div class="bg-surface-container-lowest border-l-4 border-slate-200 rounded-xl p-4 flex items-center justify-between opacity-70">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-[#F9FAFB] rounded-lg flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</div>
+<div>
+<p class="font-headline text-lg font-bold">Distributor</p>
+<p class="font-mono text-[11px] text-slate-400 uppercase">Agent-X • CMS Pipeline</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-mono text-xs text-slate-300">--</span>
+<span class="px-2.5 py-1 rounded-md bg-[#F9FAFB] text-slate-400 font-label text-[10px] font-bold uppercase tracking-wider">Waiting</span>
+</div>
+</div>
+</div>
+<!-- Metadata / Context -->
+<div class="mt-12 p-6 bg-surface-container-low rounded-2xl border border-outline-variant/20">
+<h4 class="font-label text-[10px] uppercase tracking-widest text-slate-500 mb-4">Pipeline Context</h4>
+<div class="grid grid-cols-3 gap-6">
+<div>
+<p class="font-mono text-xs text-slate-400">LATENCY</p>
+<p class="font-headline text-xl font-bold">142ms</p>
+</div>
+<div>
+<p class="font-mono text-xs text-slate-400">TOKENS</p>
+<p class="font-headline text-xl font-bold">4.2k</p>
+</div>
+<div>
+<p class="font-mono text-xs text-slate-400">CONFIDENCE</p>
+<p class="font-headline text-xl font-bold">0.982</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- BottomNavBar (from JSON) -->
+<footer class="fixed bottom-0 right-0 left-64 h-20 bg-white border-t border-[#F3F4F6] flex justify-end items-center px-10 gap-4 z-40">
+<button class="text-slate-600 px-6 py-2 border border-slate-200 rounded-lg font-label font-semibold text-sm hover:bg-slate-50 transition-all">
+                Secondary Action
+            </button>
+<button class="bg-[#E8820C] text-white rounded-lg px-6 py-2 border-l-4 border-[#E8820C] font-label font-semibold text-sm hover:bg-[#E8820C]/90 active:scale-95 transition-all">
+                Primary Action
+            </button>
+</footer>
+</main>
+<!-- Decorative Paper Texture Overlay -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] z-[100]" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBoas7UdxWi-wC-ZAN0jUVcCV7e_c1oMuyjKYZVIXqA70kBwIopPfBiIuyIpjgs041gVueFOqR-kK_neHUpodTgHv7yJRjF1Q06zVxWY_XH5mlx2tdbXc253GBgMOjJkeWcvmAxPUHAEs5lbHDXPfXHsmHqWts0myzkT55rOG8Lf5phykWa1YBeNX-bLJ0U9CEsRrZGcjg3teUr_i5BLFdcyCl9TPL2CGC5Bfzhqc-xJ6SdI9shGEAyTUQTj9YrCL78V8QlLEA8WpcH');">
+</div>
+</body></html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ContentOS — Channel Distribution Review</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,wght@0,400;0,600;0,700;1,400;1,600&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-highest": "#e3e2df",
+                        "primary-container": "#e8820c",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#004b73",
+                        "on-tertiary-container": "#003756",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#554335",
+                        "tertiary-container": "#00a4f6",
+                        "on-primary-container": "#512900",
+                        "surface": "#faf9f6",
+                        "outline": "#887363",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#ffb77b",
+                        "secondary-fixed-dim": "#f8ba87",
+                        "on-primary-fixed": "#2e1500",
+                        "primary-fixed": "#ffdcc2",
+                        "on-background": "#1b1c1a",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#2f312f",
+                        "inverse-on-surface": "#f2f1ee",
+                        "tertiary-fixed": "#cce5ff",
+                        "on-secondary-fixed": "#2e1500",
+                        "outline-variant": "#dcc2af",
+                        "surface-container": "#efeeeb",
+                        "surface-container-low": "#f4f3f0",
+                        "surface-variant": "#e3e2df",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#ffdcc2",
+                        "surface-dim": "#dbdad7",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#001d31",
+                        "on-surface": "#1b1c1a",
+                        "secondary": "#82542a",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#faf9f6",
+                        "primary-fixed-dim": "#ffb77b",
+                        "primary": "#904d00",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#6d3900",
+                        "on-secondary-fixed-variant": "#673d15",
+                        "background": "#faf9f6",
+                        "surface-container-high": "#e9e8e5",
+                        "on-secondary-container": "#794c23",
+                        "surface-tint": "#904d00",
+                        "secondary-container": "#febf8c",
+                        "tertiary": "#006397"
+                    },
+                    fontFamily: {
+                        "headline": ["Newsreader", "serif"],
+                        "body": ["Newsreader", "serif"],
+                        "label": ["Inter", "sans-serif"],
+                        "technical": ["DM Mono", "monospace"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { background-color: #faf9f6; color: #1b1c1a; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="font-body selection:bg-primary-container/30">
+<!-- SideNavBar Integration -->
+<aside class="w-64 h-screen fixed left-0 top-0 bg-[#0A0A0C] flex flex-col py-6 z-50">
+<div class="px-6 mb-10">
+<h1 class="text-white font-semibold tracking-widest font-label uppercase text-sm">ContentOS</h1>
+<p class="text-slate-500 text-[10px] tracking-widest uppercase mt-1">AI Pipeline</p>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="text-slate-400 flex items-center px-6 py-3 hover:bg-[#1E293B] hover:text-white transition-colors cursor-pointer group">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="dashboard">dashboard</span>
+<span class="font-label text-[10px] uppercase tracking-widest">Dashboard</span>
+</div>
+<div class="text-slate-400 flex items-center px-6 py-3 hover:bg-[#1E293B] hover:text-white transition-colors cursor-pointer group">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="history_edu">history_edu</span>
+<span class="font-label text-[10px] uppercase tracking-widest">Audit Log</span>
+</div>
+<div class="bg-[#1E293B] text-white border-l-4 border-[#E8820C] flex items-center px-6 py-3 cursor-pointer">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="rule">rule</span>
+<span class="font-label text-[10px] uppercase tracking-widest">Rules Editor</span>
+</div>
+</nav>
+<div class="mt-auto px-6 border-t border-slate-800 pt-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-white font-bold text-xs">CT</div>
+<div>
+<p class="text-white text-xs font-label">ET AI Hackathon 2026</p>
+<p class="text-slate-500 text-[10px] font-technical">terminal_active</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopAppBar Integration -->
+<header class="flex justify-between items-center px-10 ml-64 sticky top-0 h-14 bg-[#FFFFFF] shadow-sm z-40">
+<div class="flex items-center gap-6">
+<span class="text-[#1A1A1A] font-headline font-bold text-lg">Economic Times AI</span>
+<nav class="hidden md:flex gap-6 items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-sm" data-icon="schedule">schedule</span>
+<span class="font-technical text-sm text-slate-500">Draft to publish: ~35 min</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-sm" data-icon="payments">payments</span>
+<span class="font-technical text-sm text-slate-500">Saved: ₹3,200</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-sm" data-icon="verified">verified</span>
+<span class="font-technical text-sm text-[#E8820C] font-bold">Compliance: 94%</span>
+</div>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1 bg-surface-container rounded-full">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Pipeline running · 0:23</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 p-10 pb-32 flex justify-center">
+<div class="max-w-[1100px] w-full">
+<!-- Breadcrumbs / Status Gate -->
+<div class="flex flex-col gap-4 mb-10">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="font-label text-[10px] uppercase tracking-widest text-emerald-600 font-bold">GATE 2 OF 2 — FINAL REVIEW</span>
+</div>
+<div class="flex justify-between items-end">
+<h2 class="font-headline text-[36px] text-on-surface leading-tight">Channel Distribution Review</h2>
+<div class="flex gap-2">
+<div class="px-4 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full flex items-center gap-2 text-emerald-700 text-xs font-label font-semibold">
+<span>Gate 1</span>
+<span class="material-symbols-outlined text-sm" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="px-4 py-1.5 bg-on-background text-white rounded-full text-xs font-label font-semibold">
+                            Gate 2
+                        </div>
+</div>
+</div>
+</div>
+<!-- Two Column Layout -->
+<div class="flex gap-10 items-start">
+<!-- Left Column (Controls) -->
+<aside class="w-[320px] flex flex-col gap-8 sticky top-24">
+<section>
+<label class="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant mb-4 block">Publish To</label>
+<div class="flex flex-col gap-3">
+<!-- Channel Chips -->
+<div class="flex items-center justify-between p-4 bg-on-background text-white rounded-lg group cursor-default">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="web">web</span>
+<span class="font-label font-medium text-sm">ET Web</span>
+</div>
+<span class="material-symbols-outlined text-primary-container" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-on-background text-white rounded-lg group cursor-default">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="smartphone">smartphone</span>
+<span class="font-label font-medium text-sm">ET App</span>
+</div>
+<span class="material-symbols-outlined text-primary-container" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-on-background text-white rounded-lg group cursor-default">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+<span class="font-label font-medium text-sm">WhatsApp</span>
+</div>
+<span class="material-symbols-outlined text-primary-container" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-on-background text-white rounded-lg group cursor-default">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+<span class="font-label font-medium text-sm">LinkedIn</span>
+</div>
+<span class="material-symbols-outlined text-primary-container" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-on-background text-white rounded-lg group cursor-default">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+<span class="font-label font-medium text-sm">Newsletter</span>
+</div>
+<span class="material-symbols-outlined text-primary-container" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<p class="mt-4 font-technical text-[11px] text-slate-500 uppercase text-center">5 of 5 channels selected</p>
+</section>
+<!-- ETA Card -->
+<div class="bg-white p-6 rounded-xl border border-outline-variant/20">
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mb-2 block">Publish ETA</span>
+<div class="flex items-baseline justify-between mb-4">
+<span class="font-label font-bold text-2xl text-[#059669]">INSTANT</span>
+<span class="font-technical text-[10px] text-slate-400">SYNC: 100%</span>
+</div>
+<div class="h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-full"></div>
+</div>
+</div>
+</aside>
+<!-- Right Column (Preview & Loc) -->
+<div class="flex-1 flex flex-col gap-10">
+<!-- Preview Area -->
+<section class="flex flex-col">
+<!-- Channel Tab Bar -->
+<div class="flex border-b border-outline-variant/20 mb-6 overflow-x-auto no-scrollbar">
+<button class="px-6 py-3 border-b-2 border-primary-container text-on-surface font-label text-sm font-semibold whitespace-nowrap">ET Web</button>
+<button class="px-6 py-3 text-on-surface-variant font-label text-sm hover:text-on-surface whitespace-nowrap">ET App</button>
+<button class="px-6 py-3 text-on-surface-variant font-label text-sm hover:text-on-surface whitespace-nowrap">WhatsApp</button>
+<button class="px-6 py-3 text-on-surface-variant font-label text-sm hover:text-on-surface whitespace-nowrap">LinkedIn</button>
+<button class="px-6 py-3 text-on-surface-variant font-label text-sm hover:text-on-surface whitespace-nowrap">Newsletter</button>
+</div>
+<!-- Browser Mockup -->
+<div class="bg-white rounded-xl shadow-lg overflow-hidden border border-outline-variant/10">
+<div class="bg-surface-container-high px-4 py-2 flex items-center gap-2">
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+</div>
+<div class="flex-1 max-w-md mx-auto bg-white rounded h-5 text-[10px] flex items-center px-2 text-slate-400 font-label">
+                                    economictimes.indiatimes.com/news/industry/ril-earnings-update
+                                </div>
+</div>
+<div class="p-10 bg-white">
+<header class="mb-8 pb-4 border-b border-surface-container">
+<img alt="ET Logo" class="h-8 mb-4" data-alt="minimalist premium wordmark logo for a major financial news publication in elegant black serif font" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEkN2NY9QpMITHutHKd9rahE1rl4iKhsy8wOBVcNYNRsplSvK1U_QGUk4F4M2ht7gPowapR4ohAYsXCV3a2bXPwZGNgkyZDp4KK5gwNy6r0p0v8V1fikMUtH7mti_Z8d_3lF3trXJYsttNDM01_-1vROZbSZOU72g39br-a20L533AM9PceED1zLbGvfFBKe1yDEIJtMoqPUL88vtbMEuxExEDH8dh1w83g7CsC0bQFVs4hn1ymafy-fOwXhWYaylcsu-EzhRUzjfA"/>
+<h1 class="font-headline text-4xl italic text-on-surface leading-tight mb-4">Reliance Industries: Q3 Revenue Surges 14% as Energy Portfolio Stabilizes</h1>
+<div class="flex gap-4 items-center">
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden">
+<img alt="Author" data-alt="professional portrait of a senior financial analyst and journalist with sharp features and smart business attire" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsZWUKsbiF1tUsqCJWrUJJmtd5SiK4J1EUviGGBbZaCA-8Ge07C_maO6H-0UIDLjvJWrIgrKk8ZCPdDvYwYB8OMi0g1cSc4-fFfS_2nQazrFP8uMVaTGEKCyzkMM_SfEvAgjUnBqHgUDPZmmBNFvmh73oK-ktPpyWYKdBif6uBI3nAZavAWqEnjOPK1KjKov5iuteNNliyKJOIWMznBBBBRtsmCq2Ttg2U5a_aWJ3dBAoI_gRelIXJ-Lc6OypXegvDB7CAOK6Hp69I"/>
+</div>
+<div>
+<p class="font-label text-xs font-bold text-on-surface">By ET News Bureau</p>
+<p class="font-technical text-[10px] text-slate-500 uppercase">Updated: 4 MIN AGO</p>
+</div>
+</div>
+</header>
+<article class="font-body text-lg text-on-surface leading-relaxed max-w-2xl">
+<p class="mb-6">MUMBAI — Reliance Industries Ltd (RIL) reported a consolidated net profit increase, driven largely by sustained momentum in its retail and digital services segments. The energy major noted that while global volatility persisted, its refining margins remained resilient.</p>
+<p>Market analysts suggest that the results align with expectations, particularly the steady expansion of Jio's subscriber base and the aggressive scaling of physical retail stores across Tier-2 cities...</p>
+</article>
+<div class="mt-8 flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant font-label text-[10px] uppercase tracking-wider rounded">Reliance Industries</span>
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant font-label text-[10px] uppercase tracking-wider rounded">Q3 Results</span>
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant font-label text-[10px] uppercase tracking-wider rounded">Energy Sector</span>
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant font-label text-[10px] uppercase tracking-wider rounded">Market News</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Regional Localizations -->
+<section>
+<div class="flex items-center gap-4 mb-6">
+<h3 class="font-label text-[11px] uppercase tracking-[0.2em] text-on-surface-variant">Regional Localizations — 4 Languages</h3>
+<div class="h-[1px] flex-1 bg-outline-variant/20"></div>
+</div>
+<div class="space-y-4">
+<!-- Expanded: Hindi -->
+<div class="bg-white rounded-xl border-l-4 border-primary-container p-6">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 flex items-center justify-center bg-slate-100 font-technical text-xs font-bold rounded">HI</div>
+<div>
+<p class="font-label text-sm font-bold text-on-surface">Hindi</p>
+<p class="font-headline text-xs text-on-surface-variant">रिलायंस इंडस्ट्रीज: ऊर्जा क्षेत्र में स्थिरता के साथ तीसरी तिमाही का राजस्व 14% बढ़ा</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="expand_less">expand_less</span>
+</div>
+<div class="pl-12">
+<p class="font-headline text-base text-on-surface leading-relaxed border-l-2 border-surface-container pl-6 py-2 italic">
+                                        मुंबई — रिलायंस इंडस्ट्रीज लिमिटेड (RIL) ने समेकित शुद्ध लाभ में वृद्धि दर्ज की है, जो मुख्य रूप से इसके खुदरा और डिजिटल सेवा क्षेत्रों में निरंतर गति से प्रेरित है। ऊर्जा क्षेत्र की दिग्गज कंपनी ने कहा कि वैश्विक अस्थिरता के बावजूद, इसका रिफाइनिंग मार्जिन लचीला बना रहा।
+                                    </p>
+<div class="mt-4 flex gap-4">
+<button class="text-[10px] font-label uppercase tracking-widest text-[#E8820C] font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span> Edit Translation
+                                        </button>
+<button class="text-[10px] font-label uppercase tracking-widest text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="refresh">refresh</span> Regenerate
+                                        </button>
+</div>
+</div>
+</div>
+<!-- Collapsed: Tamil -->
+<div class="bg-surface-container-low rounded-xl px-6 py-4 flex items-center justify-between hover:bg-surface-container transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 flex items-center justify-center bg-white border border-outline-variant/20 font-technical text-xs font-bold rounded">TA</div>
+<span class="font-label text-sm font-medium text-on-surface">Tamil</span>
+<span class="font-headline text-xs text-on-surface-variant ml-4">ரிலையன்ஸ் இண்டஸ்ட்ரீஸ்: வருவாய் 14% அதிகரிப்பு</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Collapsed: Telugu -->
+<div class="bg-surface-container-low rounded-xl px-6 py-4 flex items-center justify-between hover:bg-surface-container transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 flex items-center justify-center bg-white border border-outline-variant/20 font-technical text-xs font-bold rounded">TE</div>
+<span class="font-label text-sm font-medium text-on-surface">Telugu</span>
+<span class="font-headline text-xs text-on-surface-variant ml-4">రిలయన్స్ ఇండస్ట్రీస్: ఆదాయం 14% పెరిగింది</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Collapsed: Bengali -->
+<div class="bg-surface-container-low rounded-xl px-6 py-4 flex items-center justify-between hover:bg-surface-container transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 flex items-center justify-center bg-white border border-outline-variant/20 font-technical text-xs font-bold rounded">BN</div>
+<span class="font-label text-sm font-medium text-on-surface">Bengali</span>
+<span class="font-headline text-xs text-on-surface-variant ml-4">রিলায়েন্স ইন্ডাস্ট্রিজ: আয় ১৪% বেড়েছে</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Integration / Sticky Action Bar -->
+<footer class="fixed bottom-0 right-0 left-64 h-20 bg-white border-t border-[#F3F4F6] flex justify-between items-center px-10 z-50">
+<button class="text-slate-500 font-label font-semibold flex items-center gap-2 hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+            ← Edit Draft
+        </button>
+<div class="flex gap-4">
+<button class="text-slate-600 px-6 py-2 border border-slate-200 rounded-lg font-label font-semibold hover:bg-slate-50 transition-all active:scale-95">
+                Save for later
+            </button>
+<button class="bg-[#E8820C] text-white rounded-lg px-8 py-3 border-l-4 border-[#E8820C] font-label font-bold flex items-center gap-3 shadow-lg shadow-[#E8820C]/20 hover:bg-[#E8820C]/90 transition-all active:scale-95">
+                Publish to 5 Channels 
+                <span class="material-symbols-outlined" data-icon="send">send</span>
+</button>
+</div>
+</footer>
+</body></html>

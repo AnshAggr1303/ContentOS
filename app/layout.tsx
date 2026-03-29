@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
-import { Playfair_Display, DM_Sans, DM_Mono } from "next/font/google";
+import { Inter, Newsreader, DM_Mono } from "next/font/google";
 import "./globals.css";
 import SidebarNav from "@/components/SidebarNav";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 const dmMono = DM_Mono({
@@ -34,11 +36,17 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${dmSans.variable} ${dmMono.variable} h-full antialiased`}
+      className={`light ${inter.variable} ${newsreader.variable} ${dmMono.variable}`}
     >
-      <body className="h-full flex bg-[#0A0A0C] overflow-hidden">
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="bg-surface text-on-surface">
         <SidebarNav />
-        <main className="flex-1 overflow-hidden bg-[#F7F6F3]">{children}</main>
+        <main className="ml-64 min-h-screen flex flex-col">{children}</main>
       </body>
     </html>
   );

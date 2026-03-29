@@ -1,32 +1,20 @@
 "use client";
 
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import type {
   ContentType,
   Language,
   Channel,
   AgentName,
-  ComplianceFlag,
   ComplianceResult,
   ChannelOutputMap,
-  RiskLevel,
 } from "@/lib/types";
-import PipelineStatus, {
-  type AgentProgress,
-} from "@/components/PipelineStatus";
+import PipelineStatus, { type AgentProgress } from "@/components/PipelineStatus";
 import ApprovalGate from "@/components/ApprovalGate";
 import CompliancePanel from "@/components/CompliancePanel";
 import ChannelPreview from "@/components/ChannelPreview";
-import {
-  Clock,
-  TrendingUp,
-  Zap,
-  IndianRupee,
-  Play,
-  Loader2,
-  RotateCcw,
-} from "lucide-react";
 
 // ── Types ──────────────────────────────────────────
 
@@ -34,21 +22,49 @@ type Phase =
   | "idle"
   | "running"
   | "gate_1"
+  | "compliance"
   | "gate_2"
   | "complete"
   | "failed";
 
-interface Gate1Data {
-  draft: string;
-  headlines: string[];
-}
-
-interface Gate2Data {
-  channels: Partial<ChannelOutputMap>;
-  localizations: Partial<Record<Language, string>>;
-}
-
 // ── Constants ──────────────────────────────────────
+
+const INITIAL_AGENTS: AgentProgress[] = [
+  { name: "drafter", displayName: "Drafter", status: "waiting" },
+  { name: "compliance", displayName: "Compliance", status: "waiting" },
+  { name: "localizer", displayName: "Localizer", status: "waiting" },
+  { name: "distributor", displayName: "Distributor", status: "waiting" },
+];
+
+const AGENT_CARD_INFO: Record<
+  AgentName,
+  { num: string; desc: string; model: string; icon: string }
+> = {
+  drafter: {
+    num: "Agent 01",
+    desc: "Structural decomposition and narrative synthesis based on editorial style guides.",
+    model: "llama-3.3-70b",
+    icon: "edit_note",
+  },
+  compliance: {
+    num: "Agent 02",
+    desc: "Legal oversight, fact-checking verification, and trademark protection analysis.",
+    model: "llama-3.3-70b",
+    icon: "policy",
+  },
+  localizer: {
+    num: "Agent 03",
+    desc: "Transcreation into 4 regional languages with cultural nuance and dialect accuracy.",
+    model: "gpt-oss-120b",
+    icon: "translate",
+  },
+  distributor: {
+    num: "Agent 04",
+    desc: "Multi-channel optimization for SEO, social platforms, and push notifications.",
+    model: "llama-3.3-70b",
+    icon: "rocket_launch",
+  },
+};
 
 const CONTENT_TYPES: { value: ContentType; label: string }[] = [
   { value: "news", label: "News" },
@@ -57,11 +73,11 @@ const CONTENT_TYPES: { value: ContentType; label: string }[] = [
   { value: "opinion", label: "Opinion" },
 ];
 
-const LANGUAGES: { value: Language; label: string; native: string }[] = [
-  { value: "hi", label: "Hindi", native: "हिन्दी" },
-  { value: "ta", label: "Tamil", native: "தமிழ்" },
-  { value: "te", label: "Telugu", native: "తెలుగు" },
-  { value: "bn", label: "Bengali", native: "বাংলা" },
+const LANGUAGES: { value: Language; label: string }[] = [
+  { value: "hi", label: "हिन्दी" },
+  { value: "ta", label: "தமிழ்" },
+  { value: "te", label: "తెలుగు" },
+  { value: "bn", label: "বাংলা" },
 ];
 
 const CHANNELS: { value: Channel; label: string }[] = [
@@ -72,162 +88,90 @@ const CHANNELS: { value: Channel; label: string }[] = [
   { value: "newsletter", label: "Newsletter" },
 ];
 
-const INITIAL_AGENTS: AgentProgress[] = [
-  { name: "drafter", displayName: "A1 — Drafter", status: "waiting" },
-  { name: "compliance", displayName: "A2 — Compliance", status: "waiting" },
-  { name: "localizer", displayName: "A3 — Localizer", status: "waiting" },
-  { name: "distributor", displayName: "A4 — Distributor", status: "waiting" },
-];
+const AGENT_NAMES: AgentName[] = ["drafter", "compliance", "localizer", "distributor"];
 
-// ── Metrics bar ────────────────────────────────────
+// ── Helpers ────────────────────────────────────────
 
-function MetricsBar() {
-  const metrics = [
-    {
-      icon: Clock,
-      label: "Draft-to-publish",
-      value: "~35 min",
-      sub: "vs 4 hrs manual",
-      color: "#E8820C",
-    },
-    {
-      icon: TrendingUp,
-      label: "Localization savings",
-      value: "₹3,200",
-      sub: "per article",
-      color: "#059669",
-    },
-    {
-      icon: Zap,
-      label: "Compliance catch rate",
-      value: "94%",
-      sub: "vs 60% manual",
-      color: "#E8820C",
-    },
-    {
-      icon: IndianRupee,
-      label: "Annual savings",
-      value: "₹58.4 Cr",
-      sub: "500 articles/day",
-      color: "#059669",
-    },
-  ];
-
-  return (
-    <div
-      className="shrink-0 flex items-center gap-0 border-b overflow-x-auto"
-      style={{ background: "#FFFFFF", borderColor: "#EBEBEB" }}
-    >
-      <div
-        className="px-6 py-3 border-r shrink-0"
-        style={{ borderColor: "#EBEBEB" }}
-      >
-        <h1
-          className="text-base font-semibold text-zinc-900 whitespace-nowrap"
-          style={{ fontFamily: "var(--font-playfair)" }}
-        >
-          Editor Dashboard
-        </h1>
-      </div>
-      {metrics.map(({ icon: Icon, label, value, sub, color }, i) => (
-        <React.Fragment key={label}>
-          <div
-            className="px-5 py-3 flex items-center gap-2.5 shrink-0"
-          >
-            <Icon size={13} style={{ color }} className="shrink-0" />
-            <div>
-              <p
-                className="text-[10px] whitespace-nowrap"
-                style={{ color: "#9A9AA5", fontFamily: "var(--font-dm-mono)" }}
-              >
-                {label}
-              </p>
-              <div className="flex items-baseline gap-1.5">
-                <span
-                  className="text-sm font-semibold whitespace-nowrap"
-                  style={{ color: "#1A1A1A", fontFamily: "var(--font-dm-mono)" }}
-                >
-                  {value}
-                </span>
-                <span
-                  className="text-[10px] whitespace-nowrap"
-                  style={{ color: "#C0C0C8", fontFamily: "var(--font-dm-mono)" }}
-                >
-                  {sub}
-                </span>
-              </div>
-            </div>
-          </div>
-          {i < metrics.length - 1 && (
-            <div
-              className="w-px h-8 shrink-0"
-              style={{ background: "#EBEBEB" }}
-            />
-          )}
-        </React.Fragment>
-      ))}
-    </div>
-  );
+function formatElapsed(s: number): string {
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 }
 
-// ── Demo content ───────────────────────────────────
-
-const DEMO_CONTENT = `Reliance Industries Limited today announced record quarterly profits of ₹19,641 crore for Q3 FY26, up 11.2% year-on-year, driven by strong performance across its retail, telecom, and oil-to-chemicals businesses. Chairman Mukesh Ambani expects revenue to grow 25% next year, projecting the conglomerate will reach ₹10 lakh crore in annual turnover by FY28. The company's Jio Platforms unit added 8.2 million subscribers in the quarter, taking total subscriber base to 471 million. Reliance Retail clocked revenues of ₹73,246 crore, a 15% increase. The board has approved a ₹50,000 crore capex plan for FY27, focused on green energy and 5G network densification. Analysts at Goldman Sachs have upgraded the stock to a 'strong buy' with a 12-month price target of ₹3,400.`;
-
-// ── Main page ──────────────────────────────────────
+// ── Main Page ──────────────────────────────────────
 
 export default function DashboardPage() {
+  const router = useRouter();
+
   // Form state
-  const [content, setContent] = useState("");
+  const [input, setInput] = useState("");
   const [contentType, setContentType] = useState<ContentType>("news");
   const [wordCount, setWordCount] = useState(400);
-  const [selectedLanguages, setSelectedLanguages] = useState<Language[]>([
-    "hi",
-    "ta",
-    "te",
-    "bn",
-  ]);
+  const [selectedLanguages, setSelectedLanguages] = useState<Language[]>(["hi", "ta", "te", "bn"]);
   const [selectedChannels, setSelectedChannels] = useState<Channel[]>([
-    "et_web",
-    "et_app",
-    "whatsapp",
-    "linkedin",
-    "newsletter",
+    "et_web", "et_app", "whatsapp", "linkedin", "newsletter",
   ]);
 
   // Pipeline state
-  const [jobId, setJobId] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
+  const [jobId, setJobId] = useState<string | null>(null);
   const [agents, setAgents] = useState<AgentProgress[]>(INITIAL_AGENTS);
-  const [complianceFlags, setComplianceFlags] = useState<ComplianceFlag[]>([]);
-  const [complianceOverallRisk, setComplianceOverallRisk] =
-    useState<RiskLevel>("low");
-  const [complianceStatus, setComplianceStatus] = useState<"PASS" | "FLAG">(
-    "PASS"
-  );
-  const [gate1Data, setGate1Data] = useState<Gate1Data | null>(null);
-  const [gate2Data, setGate2Data] = useState<Gate2Data | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [totalDuration, setTotalDuration] = useState<number | null>(null);
+  const [draft, setDraft] = useState<string | null>(null);
+  const [headlines, setHeadlines] = useState<string[] | null>(null);
+  const [selectedHeadline, setSelectedHeadline] = useState<string | null>(null);
+  const [complianceResult, setComplianceResult] = useState<ComplianceResult | null>(null);
+  const [channelOutputs, setChannelOutputs] = useState<Partial<ChannelOutputMap> | null>(null);
+  const [localizations, setLocalizations] = useState<Record<Language, string> | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bufferedGate2, setBufferedGate2] = useState<{
+    channels: Partial<ChannelOutputMap>;
+    localizations: Record<Language, string>;
+  } | null>(null);
 
-  // SSE connection
+  // Refs
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const esRef = useRef<EventSource | null>(null);
+
+  // ── Timer helpers ──────────────────────────────────
+
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setElapsedSeconds(0);
+    timerRef.current = setInterval(() => setElapsedSeconds((s) => s + 1), 1000);
+  }, []);
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => () => { stopTimer(); esRef.current?.close(); }, [stopTimer]);
+
+  // ── Auto-redirect on complete ──────────────────────
+
+  useEffect(() => {
+    if (phase !== "complete") return;
+    const id = setTimeout(() => router.push("/audit"), 2000);
+    return () => clearTimeout(id);
+  }, [phase, router]);
+
+  // ── SSE connection ────────────────────────────────
+
   useEffect(() => {
     if (!jobId) return;
 
     const es = new EventSource(`/api/stream?jobId=${jobId}`);
+    esRef.current = es;
 
     const updateAgent = (name: AgentName, updates: Partial<AgentProgress>) => {
-      setAgents((prev) =>
-        prev.map((a) => (a.name === name ? { ...a, ...updates } : a))
-      );
+      setAgents((prev) => prev.map((a) => (a.name === name ? { ...a, ...updates } : a)));
     };
 
     es.addEventListener("agent_start", (e: MessageEvent) => {
-      const data = JSON.parse(e.data as string) as {
-        agent: AgentName;
-        model: string;
-      };
+      const data = JSON.parse(e.data as string) as { agent: AgentName; model: string };
       updateAgent(data.agent, { status: "running", model: data.model });
     });
 
@@ -235,165 +179,194 @@ export default function DashboardPage() {
       const data = JSON.parse(e.data as string) as {
         agent: AgentName;
         duration_ms: number;
+        result?: ComplianceResult;
       };
-      updateAgent(data.agent, {
-        status: "complete",
-        durationMs: data.duration_ms,
-      });
-    });
-
-    es.addEventListener("gate_1", (e: MessageEvent) => {
-      const data = JSON.parse(e.data as string) as Gate1Data;
-      setGate1Data(data);
-      setPhase("gate_1");
-    });
-
-    es.addEventListener("compliance_flag", (e: MessageEvent) => {
-      const flag = JSON.parse(e.data as string) as ComplianceFlag;
-      setComplianceFlags((prev) => [...prev, flag]);
-      setComplianceStatus("FLAG");
-      if (flag.severity === "high") {
-        setComplianceOverallRisk("high");
-      } else if (flag.severity === "medium") {
-        setComplianceOverallRisk((prev) =>
-          prev === "high" ? "high" : "medium"
-        );
+      updateAgent(data.agent, { status: "complete", durationMs: data.duration_ms });
+      if (data.agent === "compliance" && data.result) {
+        setComplianceResult(data.result);
+        setPhase("compliance");
+        stopTimer();
       }
     });
 
-    // Full compliance result (backend may emit this after all flags)
+    // Fallback: separate compliance_result event
     es.addEventListener("compliance_result", (e: MessageEvent) => {
       const result = JSON.parse(e.data as string) as ComplianceResult;
-      setComplianceFlags(result.flags);
-      setComplianceOverallRisk(result.overall_risk);
-      setComplianceStatus(result.status);
+      setComplianceResult(result);
+      setPhase("compliance");
+      stopTimer();
+    });
+
+    es.addEventListener("gate_1", (e: MessageEvent) => {
+      const data = JSON.parse(e.data as string) as { draft: string; headlines: string[] };
+      setDraft(data.draft);
+      setHeadlines(data.headlines);
+      setPhase("gate_1");
+      stopTimer();
     });
 
     es.addEventListener("gate_2", (e: MessageEvent) => {
-      const data = JSON.parse(e.data as string) as Gate2Data;
-      setGate2Data(data);
-      setPhase("gate_2");
+      const data = JSON.parse(e.data as string) as {
+        channels: Partial<ChannelOutputMap>;
+        localizations: Record<Language, string>;
+      };
+      setChannelOutputs(data.channels);
+      setLocalizations(data.localizations);
+      setBufferedGate2({ channels: data.channels, localizations: data.localizations });
+      // Do NOT transition to gate_2 yet — wait for user to click Continue
     });
 
     es.addEventListener("complete", (e: MessageEvent) => {
-      const data = JSON.parse(e.data as string) as {
-        job_id: string;
-        total_duration_ms: number;
-      };
-      setTotalDuration(data.total_duration_ms);
+      const _data = JSON.parse(e.data as string) as { job_id: string; total_duration_ms: number };
+      void _data;
       setPhase("complete");
+      stopTimer();
+      es.close();
+      setTimeout(() => router.push("/audit"), 2000);
+    });
+
+    es.addEventListener("error", (e: MessageEvent) => {
+      const data = JSON.parse(e.data as string) as { message?: string };
+      setErrorMessage(data.message ?? "An unexpected error occurred.");
+      setPhase("failed");
+      stopTimer();
       es.close();
     });
 
     es.addEventListener("pipeline_rejected", () => {
+      resetPipelineState();
       setPhase("idle");
-      setJobId(null);
-      setAgents(INITIAL_AGENTS);
-      setComplianceFlags([]);
-      setComplianceOverallRisk("low");
-      setComplianceStatus("PASS");
-      setGate1Data(null);
-      setGate2Data(null);
-      es.close();
-    });
-
-    es.addEventListener("pipeline_error", (e: MessageEvent) => {
-      const data = JSON.parse(e.data as string) as { error: string };
-      setPhase("failed");
-      setErrorMessage(data.error ?? "Pipeline failed");
+      stopTimer();
       es.close();
     });
 
     es.onerror = () => {
-      // EventSource will auto-reconnect; only mark failed after extended silence
-      console.warn("SSE connection interrupted — awaiting reconnect");
+      // SSE will auto-reconnect; ignore transient errors
     };
 
-    return () => {
-      es.close();
-    };
+    return () => { es.close(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobId]);
 
-  // Track compliance agent completion to derive PASS status
-  useEffect(() => {
-    const complianceAgent = agents.find((a) => a.name === "compliance");
-    if (complianceAgent?.status === "complete" && complianceFlags.length === 0) {
-      setComplianceStatus("PASS");
-    }
-  }, [agents, complianceFlags.length]);
+  // ── State reset ───────────────────────────────────
 
-  // ── Handlers ────────────────────────────────────
-
-  const handleSubmit = async () => {
-    if (!content.trim() || isSubmitting) return;
-
-    setIsSubmitting(true);
-    setPhase("running");
-    setAgents(INITIAL_AGENTS);
-    setComplianceFlags([]);
-    setComplianceOverallRisk("low");
-    setComplianceStatus("PASS");
-    setGate1Data(null);
-    setGate2Data(null);
-    setTotalDuration(null);
-    setErrorMessage(null);
+  function resetPipelineState() {
     setJobId(null);
+    setDraft(null);
+    setHeadlines(null);
+    setSelectedHeadline(null);
+    setComplianceResult(null);
+    setChannelOutputs(null);
+    setLocalizations(null);
+    setElapsedSeconds(0);
+    setErrorMessage(null);
+    setAgents(INITIAL_AGENTS);
+    setBufferedGate2(null);
+  }
+
+  // ── Handlers ──────────────────────────────────────
+
+  const handleRunPipeline = async () => {
+    if (!input.trim() || isSubmitting) return;
+    setIsSubmitting(true);
+    resetPipelineState();
+    setPhase("running");
 
     try {
       const res = await fetch("/api/pipeline", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          input: content,
+          input,
           contentType,
           wordCount,
           selectedLanguages,
           selectedChannels,
         }),
       });
-
       if (!res.ok) {
         const err = (await res.json()) as { error?: string };
         throw new Error(err.error ?? "Failed to start pipeline");
       }
-
       const { jobId: newJobId } = (await res.json()) as { jobId: string };
       setJobId(newJobId);
+      startTimer();
     } catch (err: unknown) {
       setPhase("failed");
-      setErrorMessage(
-        err instanceof Error ? err.message : "Something went wrong"
-      );
+      setErrorMessage(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleGate1Approved = () => {
-    setGate1Data(null);
+  const handleApproveGate1 = (headline: string, editedDraft: string) => {
+    setDraft(editedDraft);
+    setSelectedHeadline(headline);
     setPhase("running");
+    startTimer();
   };
 
-  const handleGate1Rejected = () => {
+  const handleRejectGate1 = () => {
+    resetPipelineState();
     setPhase("idle");
-    setJobId(null);
-    setAgents(INITIAL_AGENTS);
+    stopTimer();
   };
 
-  const handleGate2Approved = () => {
+  const handleContinueFromCompliance = () => {
+    if (bufferedGate2) {
+      setPhase("gate_2");
+    } else {
+      setPhase("running");
+      startTimer();
+    }
+  };
+
+  const handleApplyFix = (quote: string, fix: string) => {
+    setDraft((prev) => {
+      if (!prev) return prev;
+
+      // Try exact match first
+      if (prev.includes(quote)) {
+        return prev.replace(quote, fix);
+      }
+
+      // Fallback: try trimmed version
+      const trimmedQuote = quote.trim();
+      if (prev.includes(trimmedQuote)) {
+        return prev.replace(trimmedQuote, fix);
+      }
+
+      // Last resort: find longest matching substring
+      // Split quote into words, find in draft
+      const words = trimmedQuote.split(' ').filter((w) => w.length > 4);
+      const anchor = words.slice(0, 5).join(' ');
+      const anchorIdx = prev.indexOf(anchor);
+      if (anchorIdx !== -1) {
+        // Find the sentence containing the anchor
+        const sentenceStart = prev.lastIndexOf('.', anchorIdx) + 1;
+        const sentenceEnd = prev.indexOf('.', anchorIdx) + 1;
+        const sentence = prev.slice(sentenceStart, sentenceEnd);
+        return prev.replace(sentence, ' ' + fix + '.');
+      }
+
+      // If nothing matches, return unchanged
+      // (Apply button will still show Applied state)
+      return prev;
+    });
+  };
+
+  const handlePublish = () => {
     setPhase("complete");
   };
 
-  const handleReset = () => {
-    setPhase("idle");
-    setJobId(null);
-    setAgents(INITIAL_AGENTS);
-    setComplianceFlags([]);
-    setComplianceStatus("PASS");
-    setGate1Data(null);
-    setGate2Data(null);
-    setContent("");
-    setErrorMessage(null);
+  const handleLoadDemo = async () => {
+    try {
+      const res = await fetch("/api/demo");
+      const data = (await res.json()) as { content: string };
+      setInput(data.content);
+    } catch {
+      // ignore
+    }
   };
 
   const toggleLanguage = (lang: Language) => {
@@ -408,567 +381,386 @@ export default function DashboardPage() {
     );
   };
 
-  // ── Derived display state ────────────────────────
+  // ── Shared: Metrics Bar ────────────────────────────
 
-  const complianceAgent = agents.find((a) => a.name === "compliance");
-  const showCompliancePanel =
-    complianceAgent?.status === "complete" || complianceFlags.length > 0;
+  const isRunning = phase === "running";
+
+  const MetricsBar = () => (
+    <header className="sticky top-0 h-14 bg-white shadow-sm flex justify-between items-center px-10 z-40">
+      <div className="flex items-center gap-8">
+        <span className="text-[#1A1A1A] font-headline font-bold text-lg">Economic Times AI</span>
+        <div className="hidden lg:flex items-center gap-6 font-technical text-xs text-slate-500">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-base text-primary-container">schedule</span>
+            Draft to publish: ~35 min
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-base text-primary-container">payments</span>
+            Saved: ₹3,200
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-base text-primary-container">verified</span>
+            Compliance: 94%
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-base text-primary-container">trending_up</span>
+            Savings: ₹58.4 Cr
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-4">
+        {isRunning && (
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container">
+            <span className="w-2 h-2 rounded-full bg-[#059669] pulse-green" />
+            <span className="font-technical text-[13px] text-slate-600">
+              Pipeline running · {formatElapsed(elapsedSeconds)}
+            </span>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+
+  // ── Shared: Input Form ────────────────────────────
 
   const isFormDisabled = phase !== "idle" && phase !== "failed";
+  const wordCountDisplay = input.trim() ? input.trim().split(/\s+/).length : 0;
 
-  // ── Right panel rendering ────────────────────────
+  const InputForm = () => (
+    <div className="space-y-6">
+      {/* Textarea */}
+      <div className="relative">
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          disabled={isFormDisabled}
+          placeholder="Paste press release, brief, or report here..."
+          className="w-full h-64 p-6 bg-surface-container-low border border-outline-variant/20 rounded-lg font-body text-base focus:ring-1 focus:ring-primary-container focus:border-primary-container transition-all resize-none outline-none placeholder:text-slate-400 disabled:opacity-60 disabled:cursor-not-allowed"
+        />
+        <div className="absolute bottom-4 right-4 font-technical text-[11px] text-slate-400">
+          {wordCountDisplay} words
+        </div>
+      </div>
+      <button
+        onClick={handleLoadDemo}
+        disabled={isFormDisabled}
+        className="font-label text-[12px] text-primary-container hover:underline inline-flex items-center gap-1 disabled:opacity-40"
+      >
+        Load demo content
+        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+      </button>
 
-  const renderRightPanel = () => {
-    if (phase === "idle") {
-      return (
-        <div className="flex flex-col items-center justify-center h-full min-h-[420px] text-center px-8">
-          <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 shadow-sm"
-            style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
-          >
-            <Play size={22} style={{ color: "#E8820C" }} className="ml-0.5" />
-          </div>
-          <h2
-            className="text-xl font-semibold text-zinc-700 mb-2"
-            style={{ fontFamily: "var(--font-playfair)" }}
-          >
-            Ready to Process
-          </h2>
-          <p
-            className="text-sm text-zinc-400 max-w-xs leading-relaxed mb-8"
-            style={{ fontFamily: "var(--font-dm-sans)" }}
-          >
-            Paste a press release or brief, configure your settings on the
-            left, and click Run Pipeline.
-          </p>
-
-          {/* Agent overview cards */}
-          <div className="grid grid-cols-2 gap-3 w-full max-w-sm text-left">
-            {[
-              {
-                step: "01",
-                label: "Drafter",
-                desc: "llama-3.3-70b crafts full ET article",
-              },
-              {
-                step: "02",
-                label: "Compliance",
-                desc: "SEBI, brand & legal rule check",
-              },
-              {
-                step: "03",
-                label: "Localizer",
-                desc: "4 Indian languages in parallel",
-              },
-              {
-                step: "04",
-                label: "Distributor",
-                desc: "5 channel-specific formats",
-              },
-            ].map(({ step, label, desc }) => (
-              <div
-                key={step}
-                className="rounded-xl p-3"
-                style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
+      {/* Controls */}
+      <div className="space-y-6 pt-2">
+        {/* Content Type */}
+        <div className="space-y-3">
+          <label className="font-label text-[10px] font-bold tracking-widest text-[#9CA3AF] uppercase">
+            Content Type
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {CONTENT_TYPES.map(({ value, label }) => (
+              <button
+                key={value}
+                onClick={() => !isFormDisabled && setContentType(value)}
+                disabled={isFormDisabled}
+                className={`px-4 py-1.5 rounded-full font-label text-xs font-medium transition-colors ${
+                  contentType === value
+                    ? "bg-[#1A1A1A] text-white"
+                    : "bg-white border border-outline-variant/30 text-slate-600 hover:border-primary-container"
+                } disabled:opacity-60`}
               >
-                <p
-                  className="text-[10px] mb-1"
-                  style={{
-                    color: "#D0D0D0",
-                    fontFamily: "var(--font-dm-mono)",
-                  }}
-                >
-                  AGENT {step}
-                </p>
-                <p
-                  className="text-sm font-medium text-zinc-700 mb-0.5"
-                  style={{ fontFamily: "var(--font-dm-sans)" }}
-                >
-                  {label}
-                </p>
-                <p
-                  className="text-xs text-zinc-400"
-                  style={{ fontFamily: "var(--font-dm-sans)" }}
-                >
-                  {desc}
-                </p>
-              </div>
+                {label}
+              </button>
             ))}
           </div>
         </div>
-      );
-    }
 
-    if (phase === "gate_1" && gate1Data) {
-      return (
+        {/* Word Count */}
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <label className="font-label text-[10px] font-bold tracking-widest text-[#9CA3AF] uppercase">
+              Word Count
+            </label>
+            <span className="font-technical text-xs font-semibold text-primary-container">
+              {wordCount} words
+            </span>
+          </div>
+          <input
+            type="range"
+            min={200}
+            max={800}
+            value={wordCount}
+            onChange={(e) => !isFormDisabled && setWordCount(Number(e.target.value))}
+            disabled={isFormDisabled}
+            className="w-full h-1 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary-container disabled:opacity-60"
+          />
+        </div>
+
+        {/* Language + Channels */}
+        <div className="grid grid-cols-2 gap-8">
+          {/* Languages */}
+          <div className="space-y-3">
+            <label className="font-label text-[10px] font-bold tracking-widest text-[#9CA3AF] uppercase">
+              Localize To
+            </label>
+            <div className="grid grid-cols-2 gap-x-2 gap-y-2">
+              {LANGUAGES.map(({ value, label }) => (
+                <label key={value} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedLanguages.includes(value)}
+                    onChange={() => !isFormDisabled && toggleLanguage(value)}
+                    disabled={isFormDisabled}
+                    className="rounded border-outline-variant text-primary-container focus:ring-primary-container"
+                  />
+                  <span className="font-technical text-[11px]">{label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Channels */}
+          <div className="space-y-3">
+            <label className="font-label text-[10px] font-bold tracking-widest text-[#9CA3AF] uppercase">
+              Publish Channels
+            </label>
+            <div className="flex flex-wrap gap-1.5">
+              {CHANNELS.map(({ value, label }) => (
+                <button
+                  key={value}
+                  onClick={() => !isFormDisabled && toggleChannel(value)}
+                  disabled={isFormDisabled}
+                  className={`px-2 py-0.5 rounded font-label text-[9px] font-bold uppercase tracking-tighter transition-colors ${
+                    selectedChannels.includes(value)
+                      ? "bg-primary-container/10 text-primary-container"
+                      : "bg-surface-container text-slate-400"
+                  } disabled:opacity-60`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Run Pipeline Button */}
+      <button
+        onClick={handleRunPipeline}
+        disabled={isFormDisabled || !input.trim() || isSubmitting}
+        className="w-full h-12 bg-[#1A1A1A] hover:bg-black text-white flex items-center justify-center gap-2 border-l-4 border-primary-container transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        {isSubmitting || phase === "running" ? (
+          <>
+            <span className="material-symbols-outlined text-sm animate-spin">sync</span>
+            <span className="font-label font-semibold text-sm uppercase tracking-widest">
+              Running...
+            </span>
+          </>
+        ) : (
+          <>
+            <span
+              className="material-symbols-outlined text-sm"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              play_arrow
+            </span>
+            <span className="font-label font-semibold text-sm uppercase tracking-widest">
+              Run Pipeline
+            </span>
+          </>
+        )}
+      </button>
+    </div>
+  );
+
+  // ── Phase: gate_1 ─────────────────────────────────
+
+  if (phase === "gate_1" && draft && headlines) {
+    return (
+      <div className="flex flex-col min-h-screen bg-surface">
+        <MetricsBar />
         <ApprovalGate
           jobId={jobId!}
-          draft={gate1Data.draft}
-          headlines={gate1Data.headlines}
-          onApproved={handleGate1Approved}
-          onRejected={handleGate1Rejected}
+          draft={draft}
+          headlines={headlines}
+          onApproved={handleApproveGate1}
+          onRejected={handleRejectGate1}
         />
-      );
-    }
-
-    if (phase === "gate_2" && gate2Data) {
-      return (
-        <>
-          {showCompliancePanel && (
-            <div className="mb-5">
-              <CompliancePanel
-                flags={complianceFlags}
-                status={complianceStatus}
-                overallRisk={complianceOverallRisk}
-              />
-            </div>
-          )}
-          <ChannelPreview
-            jobId={jobId!}
-            channels={gate2Data.channels}
-            localizations={gate2Data.localizations}
-            onApproved={handleGate2Approved}
-          />
-        </>
-      );
-    }
-
-    if (phase === "complete") {
-      return (
-        <>
-          {/* Success banner */}
-          <div
-            className="flex items-center gap-3 px-4 py-3 rounded-xl mb-5 animate-fade-up"
-            style={{
-              background: "rgba(5,150,105,0.06)",
-              border: "1px solid rgba(5,150,105,0.2)",
-            }}
-          >
-            <div
-              className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] shrink-0"
-              style={{ background: "#059669" }}
-            >
-              ✓
-            </div>
-            <div>
-              <p
-                className="text-sm font-semibold"
-                style={{ color: "#065F46" }}
-              >
-                Pipeline Complete
-              </p>
-              {totalDuration && (
-                <p
-                  className="text-[11px] mt-0.5"
-                  style={{
-                    color: "#6EE7B7",
-                    fontFamily: "var(--font-dm-mono)",
-                  }}
-                >
-                  Total: {(totalDuration / 1000).toFixed(1)}s · Job: {jobId}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {showCompliancePanel && (
-            <div className="mb-5">
-              <CompliancePanel
-                flags={complianceFlags}
-                status={complianceStatus}
-                overallRisk={complianceOverallRisk}
-              />
-            </div>
-          )}
-
-          {gate2Data && (
-            <ChannelPreview
-              jobId={jobId!}
-              channels={gate2Data.channels}
-              localizations={gate2Data.localizations}
-              onApproved={() => {}}
-            />
-          )}
-        </>
-      );
-    }
-
-    if (phase === "failed") {
-      return (
-        <div
-          className="px-5 py-4 rounded-xl animate-fade-up"
-          style={{
-            background: "rgba(220,38,38,0.05)",
-            border: "1px solid rgba(220,38,38,0.2)",
-          }}
-        >
-          <p className="font-semibold text-sm" style={{ color: "#991B1B" }}>
-            Pipeline Failed
-          </p>
-          <p
-            className="text-xs mt-1"
-            style={{ color: "#B91C1C", fontFamily: "var(--font-dm-mono)" }}
-          >
-            {errorMessage ?? "An unexpected error occurred."}
-          </p>
-        </div>
-      );
-    }
-
-    // Running phase: show agent progress + compliance panel when available
-    return (
-      <>
-        <PipelineStatus agents={agents} />
-        {showCompliancePanel && (
-          <div className="mt-5">
-            <CompliancePanel
-              flags={complianceFlags}
-              status={complianceStatus}
-              overallRisk={complianceOverallRisk}
-            />
-          </div>
-        )}
-      </>
+      </div>
     );
-  };
+  }
 
-  // ── Render ────────────────────────────────────────
+  // ── Phase: compliance ─────────────────────────────
+
+  if (phase === "compliance" && complianceResult) {
+    return (
+      <div className="flex flex-col min-h-screen bg-surface">
+        <MetricsBar />
+        <CompliancePanel
+          result={complianceResult}
+          draft={draft ?? ""}
+          onApplyFix={handleApplyFix}
+          onContinue={handleContinueFromCompliance}
+        />
+      </div>
+    );
+  }
+
+  // ── Phase: gate_2 ─────────────────────────────────
+
+  if (phase === "gate_2" && channelOutputs && localizations) {
+    return (
+      <div className="flex flex-col min-h-screen bg-surface">
+        <MetricsBar />
+        <ChannelPreview
+          jobId={jobId!}
+          channels={channelOutputs}
+          localizations={localizations}
+          onPublished={handlePublish}
+        />
+      </div>
+    );
+  }
+
+  // ── Phase: complete ───────────────────────────────
+
+  if (phase === "complete") {
+    return (
+      <div className="flex flex-col min-h-screen bg-surface">
+        <MetricsBar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4 max-w-md text-center">
+            <span
+              className="material-symbols-outlined text-[#059669]"
+              style={{ fontSize: "64px", fontVariationSettings: "'FILL' 1" }}
+            >
+              check_circle
+            </span>
+            <h2 className="font-headline text-[32px] font-semibold text-on-background">
+              Published Successfully
+            </h2>
+            <p className="font-label text-sm text-slate-500">
+              Redirecting to audit log...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Phase: failed ─────────────────────────────────
+
+  if (phase === "failed") {
+    return (
+      <div className="flex flex-col min-h-screen bg-surface">
+        <MetricsBar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4 max-w-md text-center">
+            <span
+              className="material-symbols-outlined text-error"
+              style={{ fontSize: "64px", fontVariationSettings: "'FILL' 1" }}
+            >
+              error
+            </span>
+            <h2 className="font-headline text-[32px] font-semibold text-on-background">
+              Pipeline Failed
+            </h2>
+            <p className="font-label text-sm text-slate-500">{errorMessage}</p>
+            <button
+              onClick={() => { resetPipelineState(); setPhase("idle"); }}
+              className="mt-4 bg-[#1A1A1A] text-white border-l-4 border-primary-container px-8 py-3 rounded-lg font-label font-semibold text-sm hover:bg-black transition-all active:scale-95"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Phase: idle / running ─────────────────────────
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-surface">
       <MetricsBar />
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* ── Left panel: Input form ───────────────── */}
-        <div
-          className="w-[390px] shrink-0 flex flex-col overflow-y-auto border-r"
-          style={{ background: "#FFFFFF", borderColor: "#EBEBEB" }}
-        >
-          <div className="p-5 space-y-5">
-            {/* Section title */}
+      <div className="flex-1 p-10">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12">
+          {/* Left 40%: Input */}
+          <section className="md:w-[40%] space-y-8">
             <div>
-              <h2
-                className="text-sm font-semibold text-zinc-800"
-                style={{ fontFamily: "var(--font-playfair)" }}
-              >
-                Content Input
+              <h2 className="font-headline text-[28px] font-semibold text-[#1A1A1A] leading-tight mb-2">
+                Compose Narrative
               </h2>
-              <p
-                className="text-xs mt-0.5"
-                style={{
-                  color: "#AAAAAA",
-                  fontFamily: "var(--font-dm-sans)",
-                }}
-              >
-                Paste a press release, brief, or report
+              <p className="font-label text-sm text-[#6B7280]">
+                Paste your source material to trigger the 4-agent editorial pipeline.
               </p>
             </div>
+            <InputForm />
+          </section>
 
-            {/* Textarea */}
-            <div>
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder={`Paste press release or brief here...\n\nExample: "Reliance Industries expects revenue to grow 25% next year..."`}
-                disabled={isFormDisabled}
-                className="w-full h-48 px-3.5 py-3 rounded-xl text-sm leading-relaxed resize-none transition-all duration-150"
-                style={{
-                  background: "#FAFAF8",
-                  border: "1px solid #E5E5E5",
-                  color: "#2A2A2A",
-                  fontFamily: "var(--font-dm-sans)",
-                  outline: "none",
-                  opacity: isFormDisabled ? 0.6 : 1,
-                }}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = "#E8820C";
-                  e.currentTarget.style.boxShadow =
-                    "0 0 0 3px rgba(232,130,12,0.08)";
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = "#E5E5E5";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-              />
-              <div className="flex items-center justify-between mt-1.5">
-                <button
-                  onClick={() => setContent(DEMO_CONTENT)}
-                  disabled={isFormDisabled}
-                  className="text-[11px] transition-colors disabled:opacity-40"
-                  style={{
-                    color: "#E8820C",
-                    fontFamily: "var(--font-dm-mono)",
-                  }}
-                >
-                  Load demo content →
-                </button>
-                <span
-                  className="text-[11px]"
-                  style={{
-                    color: "#C0C0C8",
-                    fontFamily: "var(--font-dm-mono)",
-                  }}
-                >
-                  {content.split(/\s+/).filter(Boolean).length} words
-                </span>
-              </div>
-            </div>
-
-            {/* Content type */}
-            <div>
-              <p
-                className="text-[10px] uppercase tracking-widest mb-2"
-                style={{
-                  color: "#9A9AA5",
-                  fontFamily: "var(--font-dm-mono)",
-                }}
-              >
-                Content Type
-              </p>
-              <div className="grid grid-cols-4 gap-1.5">
-                {CONTENT_TYPES.map(({ value, label }) => (
-                  <button
-                    key={value}
-                    onClick={() => setContentType(value)}
-                    disabled={isFormDisabled}
-                    className="py-2 rounded-lg text-xs font-medium border transition-all duration-150 disabled:opacity-50"
-                    style={{
-                      background:
-                        contentType === value ? "#1A1A1A" : "#FFFFFF",
-                      color: contentType === value ? "#FFFFFF" : "#6B6B75",
-                      borderColor:
-                        contentType === value ? "#1A1A1A" : "#E5E5E5",
-                      fontFamily: "var(--font-dm-sans)",
-                    }}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Word count slider */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <p
-                  className="text-[10px] uppercase tracking-widest"
-                  style={{
-                    color: "#9A9AA5",
-                    fontFamily: "var(--font-dm-mono)",
-                  }}
-                >
-                  Word Count
-                </p>
-                <span
-                  className="text-[11px] font-medium"
-                  style={{
-                    color: "#E8820C",
-                    fontFamily: "var(--font-dm-mono)",
-                  }}
-                >
-                  {wordCount} words
-                </span>
-              </div>
-              <input
-                type="range"
-                min={200}
-                max={800}
-                step={50}
-                value={wordCount}
-                onChange={(e) => setWordCount(parseInt(e.target.value))}
-                disabled={isFormDisabled}
-                className="w-full h-1.5 rounded-full appearance-none"
-                style={{
-                  background: `linear-gradient(to right, #E8820C ${((wordCount - 200) / 600) * 100}%, #E5E5E5 ${((wordCount - 200) / 600) * 100}%)`,
-                  opacity: isFormDisabled ? 0.5 : 1,
-                }}
-              />
-              <div
-                className="flex justify-between text-[10px] mt-1"
-                style={{
-                  color: "#D0D0D0",
-                  fontFamily: "var(--font-dm-mono)",
-                }}
-              >
-                <span>200</span>
-                <span>500</span>
-                <span>800</span>
-              </div>
-            </div>
-
-            {/* Language checkboxes */}
-            <div>
-              <p
-                className="text-[10px] uppercase tracking-widest mb-2"
-                style={{
-                  color: "#9A9AA5",
-                  fontFamily: "var(--font-dm-mono)",
-                }}
-              >
-                Localize To
-              </p>
-              <div className="grid grid-cols-2 gap-1.5">
-                {LANGUAGES.map(({ value, label, native }) => {
-                  const isChecked = selectedLanguages.includes(value);
-                  return (
-                    <button
-                      key={value}
-                      onClick={() => toggleLanguage(value)}
-                      disabled={isFormDisabled}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg border text-xs text-left transition-all duration-150 disabled:opacity-50"
-                      style={{
-                        background: isChecked
-                          ? "rgba(232,130,12,0.05)"
-                          : "#FFFFFF",
-                        borderColor: isChecked ? "#E8820C" : "#E5E5E5",
-                        fontFamily: "var(--font-dm-sans)",
-                      }}
-                    >
-                      {/* Custom checkbox */}
-                      <span
-                        className="w-3.5 h-3.5 rounded flex items-center justify-center shrink-0 transition-all"
-                        style={{
-                          background: isChecked ? "#E8820C" : "transparent",
-                          border: isChecked
-                            ? "1.5px solid #E8820C"
-                            : "1.5px solid #D0D0D0",
-                        }}
+          {/* Right 60%: Agents */}
+          <section className="md:flex-1 space-y-8">
+            {phase === "running" ? (
+              <>
+                <div className="pb-4">
+                  <h3 className="font-headline text-[28px] font-bold text-on-surface">
+                    Pipeline Status
+                  </h3>
+                  <p className="font-body text-slate-500 mt-1">
+                    Orchestrating editorial agents in real-time.
+                  </p>
+                </div>
+                <PipelineStatus agents={agents} />
+              </>
+            ) : (
+              <>
+                <div className="pb-4 border-b border-outline-variant/10">
+                  <h2 className="font-headline text-[28px] font-semibold text-[#1A1A1A] leading-tight mb-2">
+                    Ready to Process
+                  </h2>
+                  <p className="font-label text-sm text-[#6B7280]">
+                    Your content will pass through 4 specialist AI agents before reaching publication.
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  {AGENT_NAMES.map((name) => {
+                    const info = AGENT_CARD_INFO[name];
+                    return (
+                      <div
+                        key={name}
+                        className="bg-white p-6 rounded-xl border border-outline-variant/10 hover:shadow-md transition-shadow group relative overflow-hidden"
                       >
-                        {isChecked && (
-                          <svg
-                            width="8"
-                            height="6"
-                            viewBox="0 0 8 6"
-                            fill="none"
-                          >
-                            <path
-                              d="M1 3L3 5L7 1"
-                              stroke="white"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        )}
-                      </span>
-                      <span
-                        style={{
-                          color: isChecked ? "#1A1A1A" : "#8A8A95",
-                        }}
-                      >
-                        {label}
-                      </span>
-                      <span
-                        className="ml-auto"
-                        style={{ color: "#C0C0C8" }}
-                      >
-                        {native}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Channel checkboxes */}
-            <div>
-              <p
-                className="text-[10px] uppercase tracking-widest mb-2"
-                style={{
-                  color: "#9A9AA5",
-                  fontFamily: "var(--font-dm-mono)",
-                }}
-              >
-                Publish Channels
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {CHANNELS.map(({ value, label }) => {
-                  const isChecked = selectedChannels.includes(value);
-                  return (
-                    <button
-                      key={value}
-                      onClick={() => toggleChannel(value)}
-                      disabled={isFormDisabled}
-                      className="px-3 py-1.5 rounded-full text-[11px] font-medium border transition-all duration-150 disabled:opacity-50"
-                      style={{
-                        background: isChecked ? "#1A1A1A" : "#FFFFFF",
-                        color: isChecked ? "#FFFFFF" : "#8A8A95",
-                        borderColor: isChecked ? "#1A1A1A" : "#E5E5E5",
-                        fontFamily: "var(--font-dm-sans)",
-                      }}
-                    >
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Run button */}
-            <button
-              onClick={handleSubmit}
-              disabled={
-                !content.trim() ||
-                isSubmitting ||
-                (phase !== "idle" && phase !== "failed")
-              }
-              className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl text-sm font-medium text-white transition-all duration-150 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{
-                background: "#E8820C",
-                fontFamily: "var(--font-dm-sans)",
-                boxShadow: "0 1px 4px rgba(232,130,12,0.3)",
-              }}
-              onMouseEnter={(e) => {
-                if (!e.currentTarget.disabled) {
-                  e.currentTarget.style.background = "#D4730A";
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "#E8820C";
-              }}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 size={14} className="animate-spin" />
-                  Starting Pipeline...
-                </>
-              ) : (
-                <>
-                  <Play size={14} className="ml-0.5" />
-                  Run Pipeline
-                </>
-              )}
-            </button>
-
-            {/* Reset link */}
-            {(phase === "complete" || phase === "failed") && (
-              <button
-                onClick={handleReset}
-                className="w-full flex items-center justify-center gap-1.5 text-xs transition-colors"
-                style={{
-                  color: "#BEBEC8",
-                  fontFamily: "var(--font-dm-mono)",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = "#6B6B75")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = "#BEBEC8")
-                }
-              >
-                <RotateCcw size={11} />
-                Start new article
-              </button>
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-surface-container-low rounded-bl-full -mr-12 -mt-12 transition-transform group-hover:scale-110 opacity-50" />
+                        <div className="relative z-10">
+                          <header className="flex justify-between items-start mb-4">
+                            <span className="font-technical text-[10px] text-primary-container font-bold tracking-widest uppercase">
+                              {info.num}
+                            </span>
+                            <span className="material-symbols-outlined text-slate-300">
+                              {info.icon}
+                            </span>
+                          </header>
+                          <h3 className="font-label text-base font-bold text-[#1A1A1A] mb-2 capitalize">
+                            {name.charAt(0).toUpperCase() + name.slice(1)}
+                          </h3>
+                          <p className="font-label text-[13px] text-[#6B7280] mb-4 leading-relaxed">
+                            {info.desc}
+                          </p>
+                          <footer className="pt-4 border-t border-surface-container flex justify-between items-center">
+                            <span className="font-technical text-[10px] text-[#9CA3AF]">
+                              {info.model}
+                            </span>
+                          </footer>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
             )}
-          </div>
-        </div>
-
-        {/* ── Right panel: Pipeline output ─────────── */}
-        <div
-          className="flex-1 overflow-y-auto"
-          style={{ background: "#F7F6F3" }}
-        >
-          <div className="p-6 max-w-2xl mx-auto">{renderRightPanel()}</div>
+          </section>
         </div>
       </div>
     </div>

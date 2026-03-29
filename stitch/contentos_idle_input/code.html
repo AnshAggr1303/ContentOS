@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ContentOS | Economic Times AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:opsz,wght@6..72,400;500;600;700&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-highest": "#e3e2df",
+                        "primary-container": "#e8820c",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#004b73",
+                        "on-tertiary-container": "#003756",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#554335",
+                        "tertiary-container": "#00a4f6",
+                        "on-primary-container": "#512900",
+                        "surface": "#faf9f6",
+                        "outline": "#887363",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#ffb77b",
+                        "secondary-fixed-dim": "#f8ba87",
+                        "on-primary-fixed": "#2e1500",
+                        "primary-fixed": "#ffdcc2",
+                        "on-background": "#1b1c1a",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#2f312f",
+                        "inverse-on-surface": "#f2f1ee",
+                        "tertiary-fixed": "#cce5ff",
+                        "on-secondary-fixed": "#2e1500",
+                        "outline-variant": "#dcc2af",
+                        "surface-container": "#efeeeb",
+                        "surface-container-low": "#f4f3f0",
+                        "surface-variant": "#e3e2df",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#ffdcc2",
+                        "surface-dim": "#dbdad7",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#001d31",
+                        "on-surface": "#1b1c1a",
+                        "secondary": "#82542a",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#faf9f6",
+                        "primary-fixed-dim": "#ffb77b",
+                        "primary": "#904d00",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#6d3900",
+                        "on-secondary-fixed-variant": "#673d15",
+                        "background": "#faf9f6",
+                        "surface-container-high": "#e9e8e5",
+                        "on-secondary-container": "#794c23",
+                        "surface-tint": "#904d00",
+                        "secondary-container": "#febf8c",
+                        "tertiary": "#006397"
+                    },
+                    fontFamily: {
+                        "headline": ["Newsreader", "serif"],
+                        "body": ["Newsreader", "serif"],
+                        "label": ["Inter", "sans-serif"],
+                        "technical": ["DM Mono", "monospace"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Newsreader', serif; background-color: #F7F6F3; color: #1A1A1A; }
+        .font-inter { font-family: 'Inter', sans-serif; }
+        .font-dm-mono { font-family: 'DM Mono', monospace; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-surface selection:bg-primary-container selection:text-white">
+<!-- SideNavBar (from JSON) -->
+<aside class="w-64 h-screen fixed left-0 top-0 bg-[#0A0A0C] dark:bg-[#0A0A0C] flex flex-col h-full py-6 z-50">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary-container rounded flex items-center justify-center text-white font-bold font-inter">CT</div>
+<div>
+<h1 class="text-white font-semibold tracking-widest font-inter text-sm uppercase">ContentOS</h1>
+<p class="text-slate-500 text-[10px] uppercase tracking-widest">AI Pipeline</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Active: Dashboard -->
+<a class="bg-[#1E293B] text-white border-l-4 border-[#E8820C] flex items-center px-6 py-3 transition-all scale-98" href="#">
+<span class="material-symbols-outlined mr-3 text-[#E8820C]" data-icon="dashboard">dashboard</span>
+<span class="text-[10px] uppercase tracking-widest font-inter font-semibold">Dashboard</span>
+</a>
+<a class="text-slate-400 flex items-center px-6 py-3 hover:bg-[#1E293B] hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-white" data-icon="history_edu">history_edu</span>
+<span class="text-[10px] uppercase tracking-widest font-inter">Audit Log</span>
+</a>
+<a class="text-slate-400 flex items-center px-6 py-3 hover:bg-[#1E293B] hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3 group-hover:text-white" data-icon="rule">rule</span>
+<span class="text-[10px] uppercase tracking-widest font-inter">Rules Editor</span>
+</a>
+</nav>
+<div class="mt-auto px-6 pt-6">
+<div class="flex items-center gap-3 text-slate-500 px-2 py-3">
+<span class="material-symbols-outlined text-sm" data-icon="terminal">terminal</span>
+<span class="text-[9px] uppercase tracking-tighter font-inter">ET AI Hackathon 2026</span>
+</div>
+</div>
+</aside>
+<!-- TopAppBar (from JSON) -->
+<header class="flex justify-between items-center px-10 ml-64 sticky top-0 h-14 bg-[#FFFFFF] dark:bg-slate-900 shadow-sm dark:shadow-none z-40">
+<div class="flex items-center gap-8">
+<span class="text-[#1A1A1A] dark:text-white font-newsreader font-bold text-lg">Economic Times AI</span>
+<div class="hidden lg:flex items-center gap-6 text-xs font-dm-mono text-slate-500">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base text-[#E8820C]" data-icon="schedule">schedule</span>
+                    Draft to publish: ~35 min
+                </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base text-[#E8820C]" data-icon="payments">payments</span>
+                    Saved: ₹3,200
+                </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base text-[#E8820C]" data-icon="verified">verified</span>
+                    Compliance: 94%
+                </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base text-[#E8820C]" data-icon="trending_up">trending_up</span>
+                    Savings: ₹58.4 Cr
+                </div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1 bg-surface-container rounded-full animate-pulse">
+<div class="w-2 h-2 rounded-full bg-primary-container"></div>
+<span class="text-[10px] font-inter font-semibold uppercase tracking-wider text-slate-600">Pipeline running · 0:23</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 p-10 min-h-[calc(100vh-136px)] bg-surface">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-12">
+<!-- LEFT COLUMN: Input Panel (40%) -->
+<section class="md:w-[40%] space-y-8">
+<div>
+<h2 class="font-headline text-[28px] font-semibold text-[#1A1A1A] leading-tight mb-2">Compose Narrative</h2>
+<p class="font-label text-sm text-[#6B7280]">Paste your source material to trigger the 4-agent editorial pipeline.</p>
+</div>
+<div class="space-y-6">
+<div class="relative">
+<textarea class="w-full h-64 p-6 bg-surface-container-low border border-outline-variant/20 rounded-lg font-body text-base focus:ring-1 focus:ring-primary-container focus:border-primary-container transition-all resize-none outline-none placeholder:text-slate-400" placeholder="Paste press release, brief, or report here..."></textarea>
+<div class="absolute bottom-4 right-4 font-technical text-[11px] text-slate-400">0 words</div>
+</div>
+<a class="font-label text-[12px] text-[#E8820C] hover:underline inline-flex items-center gap-1" href="#">
+                        Load demo content <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</a>
+<!-- Controls Grid -->
+<div class="space-y-6 pt-4">
+<!-- Content Type -->
+<div class="space-y-3">
+<label class="font-label text-[10px] font-bold tracking-widest text-[#9CA3AF] uppercase">Content Type</label>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-1.5 rounded-full bg-[#1A1A1A] text-white font-label text-xs font-medium">News</button>
+<button class="px-4 py-1.5 rounded-full bg-white border border-outline-variant/30 text-slate-600 font-label text-xs font-medium hover:border-primary-container transition-colors">Analysis</button>
+<button class="px-4 py-1.5 rounded-full bg-white border border-outline-variant/30 text-slate-600 font-label text-xs font-medium hover:border-primary-container transition-colors">Explainer</button>
+<button class="px-4 py-1.5 rounded-full bg-white border border-outline-variant/30 text-slate-600 font-label text-xs font-medium hover:border-primary-container transition-colors">Opinion</button>
+</div>
+</div>
+<!-- Word Count Slider -->
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<label class="font-label text-[10px] font-bold tracking-widest text-[#9CA3AF] uppercase">Word Count</label>
+<span class="font-technical text-xs font-semibold text-primary-container">400 words</span>
+</div>
+<input class="w-full h-1 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary-container" max="2000" min="100" type="range" value="400"/>
+</div>
+<!-- Localization & Channels (Two Row Grid) -->
+<div class="grid grid-cols-2 gap-8">
+<div class="space-y-3">
+<label class="font-label text-[10px] font-bold tracking-widest text-[#9CA3AF] uppercase">Localize To</label>
+<div class="grid grid-cols-2 gap-x-2 gap-y-2">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="rounded border-outline-variant text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span class="font-technical text-[11px]">हिन्दी</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="rounded border-outline-variant text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span class="font-technical text-[11px]">தமிழ்</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="rounded border-outline-variant text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span class="font-technical text-[11px]">తెలుగు</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="rounded border-outline-variant text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span class="font-technical text-[11px]">বাংলা</span>
+</label>
+</div>
+</div>
+<div class="space-y-3">
+<label class="font-label text-[10px] font-bold tracking-widest text-[#9CA3AF] uppercase">Publish Channels</label>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-primary-container/10 text-primary-container font-label text-[9px] font-bold uppercase tracking-tighter">ET Web</span>
+<span class="px-2 py-0.5 rounded bg-primary-container/10 text-primary-container font-label text-[9px] font-bold uppercase tracking-tighter">ET App</span>
+<span class="px-2 py-0.5 rounded bg-primary-container/10 text-primary-container font-label text-[9px] font-bold uppercase tracking-tighter">WhatsApp</span>
+<span class="px-2 py-0.5 rounded bg-primary-container/10 text-primary-container font-label text-[9px] font-bold uppercase tracking-tighter">LinkedIn</span>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full h-12 bg-[#1A1A1A] hover:bg-black text-white flex items-center justify-center gap-2 border-l-4 border-primary-container transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-sm" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span class="font-label font-semibold text-sm uppercase tracking-widest">Run Pipeline</span>
+</button>
+</div>
+</section>
+<!-- RIGHT COLUMN: Preview Panel (60%) -->
+<section class="md:w-[60%] space-y-8">
+<div class="pb-4 border-b border-outline-variant/10">
+<h2 class="font-headline text-[28px] font-semibold text-[#1A1A1A] leading-tight mb-2">Ready to Process</h2>
+<p class="font-label text-sm text-[#6B7280]">Your content will pass through 4 specialist AI agents before reaching publication.</p>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<!-- Agent Card 1: Drafter -->
+<div class="bg-white p-6 rounded-xl border border-outline-variant/10 hover:shadow-md transition-shadow group relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-surface-container-low rounded-bl-full -mr-12 -mt-12 transition-transform group-hover:scale-110 opacity-50"></div>
+<div class="relative z-10">
+<header class="flex justify-between items-start mb-4">
+<span class="font-technical text-[10px] text-primary-container font-bold tracking-widest uppercase">Agent 01</span>
+<span class="material-symbols-outlined text-slate-300" data-icon="edit_note">edit_note</span>
+</header>
+<h3 class="font-label text-base font-bold text-[#1A1A1A] mb-2">Drafter</h3>
+<p class="font-label text-[13px] text-[#6B7280] mb-4 leading-relaxed">Structural decomposition and narrative synthesis based on editorial style guides.</p>
+<footer class="pt-4 border-t border-surface-container flex justify-between items-center">
+<span class="font-technical text-[10px] text-[#9CA3AF]">llama-3.3-70b</span>
+<div class="flex gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-slate-200"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-slate-200"></div>
+</div>
+</footer>
+</div>
+</div>
+<!-- Agent Card 2: Compliance -->
+<div class="bg-white p-6 rounded-xl border border-outline-variant/10 hover:shadow-md transition-shadow group relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-surface-container-low rounded-bl-full -mr-12 -mt-12 transition-transform group-hover:scale-110 opacity-50"></div>
+<div class="relative z-10">
+<header class="flex justify-between items-start mb-4">
+<span class="font-technical text-[10px] text-primary-container font-bold tracking-widest uppercase">Agent 02</span>
+<span class="material-symbols-outlined text-slate-300" data-icon="policy">policy</span>
+</header>
+<h3 class="font-label text-base font-bold text-[#1A1A1A] mb-2">Compliance</h3>
+<p class="font-label text-[13px] text-[#6B7280] mb-4 leading-relaxed">Legal oversight, fact-checking verification, and trademark protection analysis.</p>
+<footer class="pt-4 border-t border-surface-container flex justify-between items-center">
+<span class="font-technical text-[10px] text-[#9CA3AF]">gpt-oss-120b</span>
+<div class="flex gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-slate-200"></div>
+</div>
+</footer>
+</div>
+</div>
+<!-- Agent Card 3: Localizer -->
+<div class="bg-white p-6 rounded-xl border border-outline-variant/10 hover:shadow-md transition-shadow group relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-surface-container-low rounded-bl-full -mr-12 -mt-12 transition-transform group-hover:scale-110 opacity-50"></div>
+<div class="relative z-10">
+<header class="flex justify-between items-start mb-4">
+<span class="font-technical text-[10px] text-primary-container font-bold tracking-widest uppercase">Agent 03</span>
+<span class="material-symbols-outlined text-slate-300" data-icon="translate">translate</span>
+</header>
+<h3 class="font-label text-base font-bold text-[#1A1A1A] mb-2">Localizer</h3>
+<p class="font-label text-[13px] text-[#6B7280] mb-4 leading-relaxed">Transcreation into 4 regional languages with cultural nuance and dialect accuracy.</p>
+<footer class="pt-4 border-t border-surface-container flex justify-between items-center">
+<span class="font-technical text-[10px] text-[#9CA3AF]">llama-3.3-70b</span>
+<div class="flex gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-slate-200"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-slate-200"></div>
+</div>
+</footer>
+</div>
+</div>
+<!-- Agent Card 4: Distributor -->
+<div class="bg-white p-6 rounded-xl border border-outline-variant/10 hover:shadow-md transition-shadow group relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-surface-container-low rounded-bl-full -mr-12 -mt-12 transition-transform group-hover:scale-110 opacity-50"></div>
+<div class="relative z-10">
+<header class="flex justify-between items-start mb-4">
+<span class="font-technical text-[10px] text-primary-container font-bold tracking-widest uppercase">Agent 04</span>
+<span class="material-symbols-outlined text-slate-300" data-icon="rocket_launch">rocket_launch</span>
+</header>
+<h3 class="font-label text-base font-bold text-[#1A1A1A] mb-2">Distributor</h3>
+<p class="font-label text-[13px] text-[#6B7280] mb-4 leading-relaxed">Multi-channel optimization for SEO, social platforms, and push notifications.</p>
+<footer class="pt-4 border-t border-surface-container flex justify-between items-center">
+<span class="font-technical text-[10px] text-[#9CA3AF]">gpt-oss-120b</span>
+<div class="flex gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+</div>
+</footer>
+</div>
+</div>
+</div>
+<!-- Abstract Visual for Pipeline -->
+<div class="h-48 rounded-2xl bg-gradient-to-br from-[#1A1A1A] to-[#2D2D2D] relative overflow-hidden flex items-center justify-center p-8 group">
+<div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, #E8820C 1px, transparent 0); background-size: 24px 24px;"></div>
+<div class="text-center relative z-10">
+<div class="flex justify-center mb-4">
+<div class="flex items-center">
+<div class="w-3 h-3 rounded-full bg-primary-container"></div>
+<div class="w-16 h-[1px] bg-white/20"></div>
+<div class="w-3 h-3 rounded-full bg-white/40"></div>
+<div class="w-16 h-[1px] bg-white/20"></div>
+<div class="w-3 h-3 rounded-full bg-white/40"></div>
+<div class="w-16 h-[1px] bg-white/20"></div>
+<div class="w-3 h-3 rounded-full bg-white/40"></div>
+</div>
+</div>
+<p class="font-body text-white/60 italic text-sm">Visualizing data flow across nodes...</p>
+</div>
+<!-- Decorative generated image -->
+<img alt="Abstract visualization" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-30 grayscale pointer-events-none group-hover:scale-105 transition-transform duration-700" data-alt="Cinematic close-up of complex neural network nodes connecting with orange glowing lines over a dark monochromatic surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBylSLRzwAoRgqzzJqBEtmI9SJoP_rXn2RJOe1WPSGrWlC40OKhUVT5gOzT-ppOnF4DN4jtgn4xj8EFiEx7-vLsqTw6FqUC54gQbx_vbW70YgqybhZWaizkkT0upq71PM1JA43x_71Zfj2o33ukEKv0EV3w2W20qc1g__-VMjZiSKiKVWyCqCZMplYYpezT6xnsfEVU6y9rvDEDikmmaoOyrQCW_PjpZVoJ0qaoHZLZP05MSSEc-vZ-UNic-shyKGDHo1LqCbHXylQN"/>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (from JSON) -->
+<footer class="fixed bottom-0 right-0 left-64 h-20 border-t border-[#F3F4F6] bg-[#FFFFFF] dark:bg-slate-900 flex justify-end items-center px-10 gap-4 z-40">
+<button class="text-slate-600 px-6 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all active:scale-95 font-inter font-semibold text-xs uppercase tracking-wider">
+            Secondary Action
+        </button>
+<button class="bg-[#E8820C] text-white rounded-lg px-6 py-2 border-l-4 border-[#E8820C] hover:bg-[#E8820C]/90 transition-all active:scale-95 font-inter font-semibold text-xs uppercase tracking-wider">
+            Primary Action
+        </button>
+</footer>
+</body></html>

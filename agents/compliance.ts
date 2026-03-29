@@ -57,6 +57,8 @@ Check the article for violations. For each violation:
 - Identify which rule was broken by rule_id
 - Provide a specific suggested rewrite
 
+CRITICAL: The quote field must be copied VERBATIM from the article text provided. Do not paraphrase, summarize, or add ellipsis. Copy the exact characters including punctuation and spacing as they appear in the article. The quote will be used for exact string matching — any deviation will cause the fix to fail silently.
+
 Respond ONLY with valid JSON — no markdown, no code fences — in this exact format:
 {
   "status": "PASS",

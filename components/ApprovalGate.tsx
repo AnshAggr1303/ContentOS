@@ -2,15 +2,16 @@
 
 import * as React from "react";
 import { useState } from "react";
-import { CheckCircle, XCircle, ChevronRight, Edit3 } from "lucide-react";
 
 interface ApprovalGateProps {
   jobId: string;
   draft: string;
   headlines: string[];
-  onApproved: () => void;
+  onApproved: (selectedHeadline: string, editedDraft: string) => void;
   onRejected: () => void;
 }
+
+const HEADLINE_LABELS = ["PUNCHY", "DESCRIPTIVE", "ANALYTICAL"];
 
 export default function ApprovalGate({
   jobId,
@@ -19,14 +20,11 @@ export default function ApprovalGate({
   onApproved,
   onRejected,
 }: ApprovalGateProps) {
-  const [selectedHeadline, setSelectedHeadline] = useState<string>(
-    headlines[0] ?? ""
-  );
+  const [selectedHeadline, setSelectedHeadline] = useState<string>(headlines[0] ?? "");
   const [editedDraft, setEditedDraft] = useState(draft);
+  const [isEditing, setIsEditing] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
-
-  const wordCount = editedDraft.split(/\s+/).filter(Boolean).length;
 
   const handleApprove = async () => {
     if (!selectedHeadline) return;
@@ -43,7 +41,7 @@ export default function ApprovalGate({
           editedDraft,
         }),
       });
-      onApproved();
+      onApproved(selectedHeadline, editedDraft);
     } finally {
       setIsApproving(false);
     }
@@ -63,191 +61,164 @@ export default function ApprovalGate({
     }
   };
 
+  const draftParagraphs = editedDraft
+    .split(/\n\n+/)
+    .filter(Boolean)
+    .map((p) => p.trim());
+
   return (
-    <div className="animate-fade-up space-y-5">
-      {/* Gate header */}
-      <div
-        className="flex items-center gap-3 px-4 py-3 rounded-xl"
-        style={{ background: "rgba(232,130,12,0.06)", border: "1px solid rgba(232,130,12,0.15)" }}
-      >
-        <div
-          className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
-          style={{ background: "#E8820C", fontFamily: "var(--font-dm-mono)" }}
-        >
-          1
+    <div className="max-w-[1000px] mx-auto px-10 pt-12 pb-32">
+      {/* Gate Header */}
+      <div className="flex flex-col gap-4 mb-12">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-primary-container" />
+          <span className="text-[10px] font-label font-bold tracking-widest text-primary-container uppercase">
+            GATE 1 OF 2 — DRAFT REVIEW
+          </span>
         </div>
-        <div>
-          <h3
-            className="text-base font-semibold text-zinc-900"
-            style={{ fontFamily: "var(--font-playfair)" }}
-          >
-            Editorial Review — Gate 1
-          </h3>
-          <p className="text-xs text-zinc-500 mt-0.5">
-            Select a headline and review the draft before compliance check
-          </p>
+        <div className="flex justify-between items-end">
+          <h2 className="text-[3.5rem] font-headline text-on-surface leading-tight">
+            Editorial Draft Review
+          </h2>
+          <div className="flex gap-2 pb-4">
+            <div className="px-4 py-1.5 bg-[#1A1A1A] text-white rounded-full text-xs font-label">
+              Gate 1
+            </div>
+            <div className="px-4 py-1.5 border border-outline-variant text-slate-400 rounded-full text-xs font-label">
+              Gate 2
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Headline selection */}
-      <div>
-        <p
-          className="text-[10px] uppercase tracking-widest mb-3"
-          style={{ color: "#9A9AA5", fontFamily: "var(--font-dm-mono)" }}
-        >
-          Choose Headline
-        </p>
-        <div className="space-y-2">
+      {/* Headline Selection */}
+      <section className="mb-16">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-[10px] font-label font-bold tracking-[0.2em] text-on-surface-variant uppercase">
+            Select Headline
+          </h3>
+        </div>
+        <div className="grid grid-cols-3 gap-6">
           {headlines.map((headline, i) => {
             const isSelected = selectedHeadline === headline;
             return (
-              <button
+              <div
                 key={i}
                 onClick={() => setSelectedHeadline(headline)}
-                className="w-full text-left px-4 py-3.5 rounded-xl border-2 transition-all duration-150 flex items-start gap-3 group"
-                style={{
-                  borderColor: isSelected ? "#E8820C" : "#EBEBEB",
-                  background: isSelected ? "rgba(232,130,12,0.04)" : "#FFFFFF",
-                }}
+                className={`p-6 rounded-xl cursor-pointer transition-all group ${
+                  isSelected
+                    ? "bg-white border-[1.5px] border-primary-container ring-4 ring-primary-container/5"
+                    : "bg-white border border-outline-variant hover:border-primary-container"
+                }`}
               >
-                {/* Radio circle */}
-                <span
-                  className="shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center mt-0.5 transition-all"
-                  style={{
-                    borderColor: isSelected ? "#E8820C" : "#D0D0D0",
-                    background: isSelected ? "#E8820C" : "transparent",
-                  }}
-                >
+                <div className="flex justify-between items-start mb-4">
+                  <span
+                    className={`text-[10px] font-technical tracking-widest ${
+                      isSelected ? "text-primary-container" : "text-slate-400 group-hover:text-primary-container"
+                    }`}
+                  >
+                    {HEADLINE_LABELS[i] ?? `Option ${i + 1}`}
+                  </span>
                   {isSelected && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-white block" />
+                    <span
+                      className="material-symbols-outlined text-primary-container"
+                      style={{ fontVariationSettings: "'FILL' 1" }}
+                    >
+                      check_circle
+                    </span>
                   )}
-                </span>
-
-                <span
-                  className="text-sm leading-snug flex-1"
-                  style={{
-                    fontFamily: "var(--font-playfair)",
-                    color: isSelected ? "#1A1A1A" : "#5A5A65",
-                    fontWeight: isSelected ? 600 : 400,
-                  }}
+                </div>
+                <p
+                  className={`text-xl font-headline leading-snug ${
+                    isSelected ? "text-on-surface" : "text-slate-600 group-hover:text-on-surface"
+                  }`}
                 >
                   {headline}
-                </span>
-
-                {isSelected && (
-                  <ChevronRight
-                    size={14}
-                    className="shrink-0 mt-0.5"
-                    style={{ color: "#E8820C" }}
-                  />
-                )}
-              </button>
+                </p>
+              </div>
             );
           })}
         </div>
-      </div>
+      </section>
 
-      {/* Draft editor */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <p
-            className="text-[10px] uppercase tracking-widest"
-            style={{ color: "#9A9AA5", fontFamily: "var(--font-dm-mono)" }}
+      {/* Article Draft */}
+      <section className="mb-8">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-[10px] font-label font-bold tracking-[0.2em] text-on-surface-variant uppercase">
+            Article Draft
+          </h3>
+          <button
+            onClick={() => setIsEditing((v) => !v)}
+            className="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-xs font-label hover:bg-surface-container transition-colors"
           >
-            Draft Article
-          </p>
-          <div className="flex items-center gap-1.5">
-            <Edit3 size={10} style={{ color: "#BEBEC8" }} />
-            <span
-              className="text-[10px]"
-              style={{ color: "#BEBEC8", fontFamily: "var(--font-dm-mono)" }}
-            >
-              editable
+            <span className="material-symbols-outlined text-sm">
+              {isEditing ? "visibility" : "edit"}
             </span>
-          </div>
+            <span>{isEditing ? "Preview" : "Edit Draft"}</span>
+          </button>
         </div>
-        <textarea
-          value={editedDraft}
-          onChange={(e) => setEditedDraft(e.target.value)}
-          className="w-full h-60 px-4 py-3.5 rounded-xl text-sm leading-relaxed resize-none transition-all duration-150"
-          style={{
-            background: "#FAFAF8",
-            border: "1px solid #E5E5E5",
-            color: "#2A2A2A",
-            fontFamily: "var(--font-dm-sans)",
-            outline: "none",
-          }}
-          onFocus={(e) => {
-            e.currentTarget.style.borderColor = "#E8820C";
-            e.currentTarget.style.boxShadow = "0 0 0 3px rgba(232,130,12,0.08)";
-          }}
-          onBlur={(e) => {
-            e.currentTarget.style.borderColor = "#E5E5E5";
-            e.currentTarget.style.boxShadow = "none";
-          }}
-        />
-        <p
-          className="text-[11px] mt-1.5 text-right"
-          style={{ color: "#C0C0C8", fontFamily: "var(--font-dm-mono)" }}
-        >
-          {wordCount} words
-        </p>
-      </div>
 
-      {/* Actions */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={handleApprove}
-          disabled={!selectedHeadline || isApproving}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium text-white transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{
-            background: "#E8820C",
-            fontFamily: "var(--font-dm-sans)",
-          }}
-          onMouseEnter={(e) =>
-            !e.currentTarget.disabled &&
-            (e.currentTarget.style.background = "#D4730A")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.background = "#E8820C")
-          }
-        >
-          <CheckCircle size={14} />
-          {isApproving ? "Approving..." : "Approve & Continue"}
-        </button>
+        {isEditing ? (
+          <div className="bg-white p-8 rounded-xl shadow-sm">
+            <textarea
+              value={editedDraft}
+              onChange={(e) => setEditedDraft(e.target.value)}
+              className="w-full h-80 font-body text-[17px] leading-[1.8] text-on-surface resize-none outline-none border border-outline-variant/20 rounded-lg p-6 focus:border-primary-container transition-colors"
+            />
+            <p className="text-[11px] mt-2 text-right text-outline font-label">
+              {editedDraft.split(/\s+/).filter(Boolean).length} words
+            </p>
+          </div>
+        ) : (
+          <article className="bg-white p-12 rounded-xl shadow-sm relative overflow-hidden">
+            <div className="flex items-center gap-3 mb-8">
+              <span className="text-[10px] font-technical text-slate-400 tracking-widest">
+                STORY SLUG
+              </span>
+              <span className="text-[10px] font-technical text-primary-container font-bold tracking-widest">
+                {jobId.slice(0, 16).toUpperCase()}
+              </span>
+            </div>
+            <h1 className="text-4xl font-headline leading-tight italic mb-10 text-on-surface">
+              {selectedHeadline || headlines[0]}
+            </h1>
+            <div className="space-y-8 max-w-[720px]">
+              {draftParagraphs.slice(0, 2).map((para, i) => (
+                <p key={i} className="text-[17px] font-headline leading-[1.8] text-on-surface">
+                  {para}
+                </p>
+              ))}
+              {draftParagraphs.length > 2 && (
+                <div className="relative pt-8 pb-4">
+                  <div className="absolute inset-x-0 bottom-0 h-32 article-fade pointer-events-none" />
+                  <p className="text-[17px] font-headline leading-[1.8] text-on-surface opacity-40">
+                    {draftParagraphs[2]}
+                  </p>
+                </div>
+              )}
+            </div>
+          </article>
+        )}
+      </section>
 
+      {/* Sticky Action Footer */}
+      <footer className="fixed bottom-0 left-64 right-0 h-20 bg-white border-t border-[#F3F4F6] flex justify-end items-center px-10 gap-4 z-50">
         <button
           onClick={handleReject}
           disabled={isRejecting}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all duration-150 disabled:opacity-50"
-          style={{
-            borderColor: "#E5E5E5",
-            color: "#8A8A95",
-            background: "#FFFFFF",
-            fontFamily: "var(--font-dm-sans)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = "#FCA5A5";
-            e.currentTarget.style.color = "#DC2626";
-            e.currentTarget.style.background = "#FFF5F5";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = "#E5E5E5";
-            e.currentTarget.style.color = "#8A8A95";
-            e.currentTarget.style.background = "#FFFFFF";
-          }}
+          className="px-8 py-3 text-error border border-error rounded-lg text-sm font-label font-semibold hover:bg-error/5 transition-all active:scale-95 disabled:opacity-50"
         >
-          <XCircle size={14} />
-          {isRejecting ? "Rejecting..." : "Reject"}
+          {isRejecting ? "Rejecting..." : "Reject Draft"}
         </button>
-
-        <span
-          className="text-[11px] ml-auto"
-          style={{ color: "#BEBEC8", fontFamily: "var(--font-dm-mono)" }}
+        <button
+          onClick={handleApprove}
+          disabled={!selectedHeadline || isApproving}
+          className="bg-[#1A1A1A] text-white border-l-4 border-primary-container px-8 py-3 rounded-lg text-sm font-label font-semibold hover:bg-slate-800 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
         >
-          pipeline paused at gate 1
-        </span>
-      </div>
+          <span>{isApproving ? "Forwarding..." : "Approve & Forward"}</span>
+          <span className="material-symbols-outlined text-sm">arrow_forward</span>
+        </button>
+      </footer>
     </div>
   );
 }
